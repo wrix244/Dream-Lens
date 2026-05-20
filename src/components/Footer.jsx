@@ -1,7 +1,7 @@
-export default function Footer({ filters, activeFilter, onFilterSelect }) {
+export default function Footer({ filters, onFilterSelect }) {
   return (
-    <footer style={{ borderTop: "1px solid rgba(255,255,255,0.07)", background: "rgba(8,14,9,0.95)", padding: "28px 32px 20px" }}>
-      <div style={{ maxWidth: 900, margin: "0 auto", display: "flex", flexWrap: "wrap", gap: 32, justifyContent: "space-between" }}>
+    <footer className="app-footer">
+      <div className="footer-content">
         <div style={{ maxWidth: 260 }}>
           <div style={{ fontSize: 16, fontWeight: 300, letterSpacing: "0.1em", color: "#a8dba8", marginBottom: 6 }}>
             dream<span style={{ color: "#5dbb63", fontStyle: "italic" }}>lens</span>
@@ -36,7 +36,7 @@ export default function Footer({ filters, activeFilter, onFilterSelect }) {
             "Upload any nature photo",
             "Pick a cinematic filter",
             "Compare before & after",
-            "Export full-resolution PNG",
+            "Export full-resolution JPG",
           ].map((step, index) => (
             <div key={step} style={{ fontSize: 11, color: "rgba(255,255,255,0.32)", marginBottom: 6, display: "flex", gap: 8, alignItems: "flex-start" }}>
               <span style={{ color: "#5dbb63", fontSize: 10, marginTop: 1 }}>0{index + 1}</span>
@@ -46,7 +46,7 @@ export default function Footer({ filters, activeFilter, onFilterSelect }) {
         </div>
       </div>
 
-      <div style={{ maxWidth: 900, margin: "20px auto 0", paddingTop: 16, borderTop: "1px solid rgba(255,255,255,0.05)", display: "flex", justifyContent: "space-between", alignItems: "center", flexWrap: "wrap", gap: 8 }}>
+      <div className="footer-bottom">
         <div style={{ fontSize: 10, color: "rgba(255,255,255,0.18)", letterSpacing: "0.1em" }}>
           © 2025 DREAMLENS · ALL FILTERS RUN IN YOUR BROWSER · NO DATA UPLOADED
         </div>
