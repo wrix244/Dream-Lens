@@ -1,6 +1,7 @@
 export default function ImageCompare({
   displayImg,
   activeFilter,
+  activeFont,
   rendering,
   origRef,
   filtRef,
@@ -18,38 +19,10 @@ export default function ImageCompare({
   onUploadClick,
 }) {
   return (
-    <main
-      style={{
-        flex: 1,
-        display: "flex",
-        flexDirection: "column",
-        alignItems: "center",
-        justifyContent: "center",
-        padding: 24,
-        overflowY: "auto",
-        position: "relative",
-        minHeight: 0,
-      }}
-    >
-      <div style={{ width: "100%", maxWidth: 760, minHeight: 480, padding: 18, borderRadius: 24, background: "rgba(6, 16, 12, 0.82)", boxShadow: "0 28px 80px rgba(0, 0, 0, 0.25)", border: "1px solid rgba(115, 228, 164, 0.12)" }}>
+    <main className="compare-workspace">
+      <div className="compare-card">
       {displayImg && (
-        <div
-          style={{
-            position: "absolute",
-            top: 16,
-            left: "50%",
-            transform: "translateX(-50%)",
-            display: "flex",
-            alignItems: "center",
-            gap: 8,
-            background: "rgba(14,26,16,0.85)",
-            backdropFilter: "blur(10px)",
-            border: "1px solid rgba(93,187,99,0.2)",
-            borderRadius: 30,
-            padding: "6px 16px",
-            zIndex: 10,
-          }}
-        >
+        <div className="compare-badge">
           <span style={{ fontSize: 15 }}>{activeFilter.emoji}</span>
           <span style={{ fontSize: 12, color: "#a8dba8", letterSpacing: "0.06em" }}>{activeFilter.name}</span>
           <span style={{ fontSize: 10, color: "rgba(255,255,255,0.3)", letterSpacing: "0.04em" }}>— {activeFilter.tag}</span>
@@ -120,15 +93,36 @@ export default function ImageCompare({
                 <path d="M5 8H11M5 8L3 6M5 8L3 10M11 8L13 6M11 8L13 10" stroke="#0e1a10" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round" />
               </svg>
             </div>
+
+            {/* Live font watermark overlay */}
+            {activeFont && (
+              <div
+                style={{
+                  position: "absolute",
+                  bottom: "4%",
+                  right: "4%",
+                  color: "rgba(255, 255, 255, 0.72)",
+                  textShadow: "0 2px 8px rgba(0,0,0,0.75)",
+                  ...activeFont.style,
+                  fontSize: "clamp(12px, 3.8vw, 24px)",
+                  zIndex: 8,
+                  pointerEvents: "none",
+                  userSelect: "none",
+                  lineHeight: 1,
+                }}
+              >
+                DreamLens
+              </div>
+            )}
           </div>
-          <div style={{ marginTop: 14, display: "flex", alignItems: "center", justifyContent: "space-between" }}>
-            <div style={{ fontSize: 10, color: "rgba(255,255,255,0.2)", letterSpacing: "0.1em" }}>← DRAG SLIDER TO COMPARE →</div>
+          <div className="compare-actions-row">
+            <div className="compare-help-text">← DRAG SLIDER TO COMPARE →</div>
             <div style={{ display: "flex", gap: 8 }}>
               <button className="btn-ghost" onClick={onReset}>
                 ↺ Reset
               </button>
               <button className="btn-primary" onClick={onDownload}>
-                ↓ Save PNG
+                ↓ Save JPG
               </button>
             </div>
           </div>

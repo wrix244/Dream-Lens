@@ -1,36 +1,21 @@
 import FilterThumb from "./FilterThumb";
 
-export default function FiltersSidebar({ filters, displayImg, activeFilter, onFilterSelect }) {
+export default function FiltersSidebar({ filters, displayImg, activeFilter, onFilterSelect, isMobile }) {
   return (
-    <aside
-      style={{
-        width: 128,
-        minWidth: 128,
-        flexShrink: 0,
-        borderRight: "1px solid rgba(255,255,255,0.08)",
-        overflowY: "auto",
-        padding: "18px 12px",
-        display: "flex",
-        flexDirection: "column",
-        gap: 12,
-        background: "rgba(3,23,13,0.92)",
-        boxShadow: "inset 0 0 0 1px rgba(80, 222, 146, 0.08)",
-        backdropFilter: "blur(10px)",
-      }}
-    >
-      <div style={{ fontSize: 9, color: "rgba(255,255,255,0.22)", letterSpacing: "0.18em", marginBottom: 4, paddingLeft: 2 }}>
-        FILTERS
+    <aside className={isMobile ? "mobile-filters-bar" : "desktop-filters-sidebar"}>
+      {!isMobile && <div className="sidebar-title">FILTERS</div>}
+      <div className={isMobile ? "mobile-filters-list" : "desktop-filters-list"}>
+        {filters.map((filter) => (
+          <FilterThumb
+            key={filter.id}
+            filter={filter}
+            srcImg={displayImg}
+            size={isMobile ? 64 : 80}
+            selected={activeFilter.id === filter.id}
+            onClick={() => onFilterSelect(filter)}
+          />
+        ))}
       </div>
-      {filters.map((filter) => (
-        <FilterThumb
-          key={filter.id}
-          filter={filter}
-          srcImg={displayImg}
-          size={80}
-          selected={activeFilter.id === filter.id}
-          onClick={() => onFilterSelect(filter)}
-        />
-      ))}
     </aside>
   );
 }

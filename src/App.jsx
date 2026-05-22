@@ -20,6 +20,13 @@ export default function App() {
   const [dragging, setDragging] = useState(false);
   const [rendering, setRendering] = useState(false);
   const [dragOver, setDragOver] = useState(false);
+  const [isMobile, setIsMobile] = useState(() => {
+    if (typeof window !== "undefined") {
+      return window.matchMedia("(max-width: 900px)").matches;
+    }
+    return false;
+  });
+  const [activeMobileTab, setActiveMobileTab] = useState("filters");
 
   const origRef = useRef(null);
   const filtRef = useRef(null);
@@ -31,6 +38,13 @@ export default function App() {
     img.onload = () => setSrcImg(img);
     img.onerror = () => setSrcImg(null);
     img.src = SAMPLE_PATH;
+  }, []);
+
+  useEffect(() => {
+    const media = window.matchMedia("(max-width: 900px)");
+    const listener = (e) => setIsMobile(e.matches);
+    media.addEventListener("change", listener);
+    return () => media.removeEventListener("change", listener);
   }, []);
 
   const displayImg = userImg || srcImg;
@@ -48,27 +62,38 @@ export default function App() {
       originalCanvas.getContext("2d").drawImage(displayImg, 0, 0, width, height);
     }
 
-    setRendering(true);
     const timeout = window.setTimeout(() => {
-      renderToCanvas(filtRef.current, displayImg, activeFilter, width, height);
+      renderToCanvas(filtRef.current, displayImg, activeFilter, width, height, activeFont);
       setRendering(false);
     }, 40);
 
     return () => window.clearTimeout(timeout);
-  }, [displayImg, activeFilter]);
+  }, [displayImg, activeFilter, activeFont]);
 
   const handleFile = (file) => {
     if (!file || !file.type.startsWith("image/")) return;
+    setRendering(true);
     const img = new Image();
     img.onload = () => setUserImg(img);
     img.src = URL.createObjectURL(file);
+  };
+
+  const handleFilterSelect = (filter) => {
+    setRendering(true);
+    setActiveFilter(filter);
+  };
+
+  const handleFontSelect = (font) => {
+    setRendering(true);
+    setActiveFont(font);
   };
 
   const getSliderPct = (event) => {
     const wrap = sliderWrapRef.current;
     if (!wrap) return sliderPos;
     const rect = wrap.getBoundingClientRect();
-    const clientX = event.touches ? event.touches[0].clientX : event.clientX;
+    const touch = (event.touches && event.touches[0]) || (event.changedTouches && event.changedTouches[0]);
+    const clientX = touch ? touch.clientX : event.clientX;
     return Math.min(100, Math.max(0, ((clientX - rect.left) / rect.width) * 100));
   };
 
@@ -76,29 +101,24 @@ export default function App() {
     const canvas = filtRef.current;
     if (!canvas) return;
     const anchor = document.createElement("a");
-    anchor.download = `dreamlens-${activeFilter.id}.png`;
-    anchor.href = canvas.toDataURL("image/png", 1);
+    anchor.download = `dreamlens-${activeFilter.id}.jpg`;
+    anchor.href = canvas.toDataURL("image/jpeg", 0.9);
     anchor.click();
   };
 
   return (
-    <div style={{
-      display: "flex",
-      flexDirection: "column",
-      minHeight: "100vh",
-      background: "radial-gradient(circle at top left, rgba(127, 255, 193, 0.16), transparent 18%), radial-gradient(circle at bottom right, rgba(114, 194, 255, 0.12), transparent 16%), linear-gradient(180deg, #08120d 0%, #0b1a10 100%)",
-      color: "#d8edd8",
-      fontFamily: "system-ui, sans-serif",
-      overflowX: "hidden",
-    }}>
+    <div className="app-container">
       <Header displayImg={displayImg} onExport={download} inputRef={inputRef} onUploadClick={() => inputRef.current?.click()} onFileSelect={handleFile} />
 
-      <div style={{ display: "flex", flex: 1, overflow: "hidden", minHeight: 0 }}>
-        <FiltersSidebar filters={FILTERS} displayImg={displayImg} activeFilter={activeFilter} onFilterSelect={setActiveFilter} />
+      <div className="main-workspace">
+        {!isMobile && (
+          <FiltersSidebar filters={FILTERS} displayImg={displayImg} activeFilter={activeFilter} onFilterSelect={handleFilterSelect} isMobile={false} />
+        )}
 
         <ImageCompare
           displayImg={displayImg}
           activeFilter={activeFilter}
+          activeFont={activeFont}
           rendering={rendering}
           origRef={origRef}
           filtRef={filtRef}
@@ -108,7 +128,10 @@ export default function App() {
           dragging={dragging}
           setDragging={setDragging}
           getSliderPct={getSliderPct}
-          onReset={() => setUserImg(null)}
+          onReset={() => {
+            setRendering(true);
+            setUserImg(null);
+          }}
           onDownload={download}
           dragOver={dragOver}
           setDragOver={setDragOver}
@@ -116,10 +139,38 @@ export default function App() {
           onUploadClick={() => inputRef.current?.click()}
         />
 
-        <FontsSidebar fonts={FONTS} activeFont={activeFont} onFontSelect={setActiveFont} />
+        {!isMobile && (
+          <FontsSidebar fonts={FONTS} activeFont={activeFont} onFontSelect={handleFontSelect} isMobile={false} />
+        )}
       </div>
 
-      <Footer filters={FILTERS} activeFilter={activeFilter} onFilterSelect={setActiveFilter} />
+      {isMobile && (
+        <div className="mobile-bottom-panel">
+          <div className="mobile-tabs">
+            <button
+              className={`mobile-tab-btn ${activeMobileTab === "filters" ? "active" : ""}`}
+              onClick={() => setActiveMobileTab("filters")}
+            >
+              🌸 Filters
+            </button>
+            <button
+              className={`mobile-tab-btn ${activeMobileTab === "fonts" ? "active" : ""}`}
+              onClick={() => setActiveMobileTab("fonts")}
+            >
+              ✍️ Typography
+            </button>
+          </div>
+          <div className="mobile-tab-content">
+            {activeMobileTab === "filters" ? (
+              <FiltersSidebar filters={FILTERS} displayImg={displayImg} activeFilter={activeFilter} onFilterSelect={handleFilterSelect} isMobile={true} />
+            ) : (
+              <FontsSidebar fonts={FONTS} activeFont={activeFont} onFontSelect={handleFontSelect} isMobile={true} />
+            )}
+          </div>
+        </div>
+      )}
+
+      <Footer filters={FILTERS} onFilterSelect={handleFilterSelect} />
     </div>
   );
 }

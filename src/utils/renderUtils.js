@@ -20,7 +20,36 @@ function applyGrain(data, strength) {
   }
 }
 
-export function renderToCanvas(canvas, img, filter, W, H) {
+function drawWatermark(ctx, W, H, activeFont) {
+  if (!activeFont) return;
+  ctx.save();
+  const fontSize = Math.max(14, Math.round(H * 0.032));
+  const fStyle = activeFont.style.fontStyle || "";
+  const fWeight = activeFont.style.fontWeight || "";
+  const fFamily = activeFont.style.fontFamily || "system-ui, sans-serif";
+  const letterSpacing = activeFont.style.letterSpacing || "normal";
+  
+  if ("letterSpacing" in ctx) {
+    ctx.letterSpacing = letterSpacing;
+  }
+  
+  ctx.font = `${fStyle} ${fWeight} ${fontSize}px ${fFamily}`.trim();
+  ctx.fillStyle = "rgba(255, 255, 255, 0.72)";
+  ctx.shadowColor = "rgba(0, 0, 0, 0.6)";
+  ctx.shadowBlur = Math.max(2, H * 0.008);
+  ctx.shadowOffsetX = Math.max(1, H * 0.002);
+  ctx.shadowOffsetY = Math.max(1, H * 0.002);
+  
+  const text = "DreamLens";
+  const textWidth = ctx.measureText(text).width;
+  const x = W - textWidth - (W * 0.04);
+  const y = H - (H * 0.04);
+  
+  ctx.fillText(text, x, y);
+  ctx.restore();
+}
+
+export function renderToCanvas(canvas, img, filter, W, H, activeFont) {
   if (!canvas || !img) return;
   canvas.width = W;
   canvas.height = H;
@@ -30,6 +59,7 @@ export function renderToCanvas(canvas, img, filter, W, H) {
 
   if (filter.id === "original") {
     ctx.drawImage(img, 0, 0, W, H);
+    drawWatermark(ctx, W, H, activeFont);
     return;
   }
 
@@ -70,4 +100,6 @@ export function renderToCanvas(canvas, img, filter, W, H) {
     ctx.fillRect(0, 0, W, H);
     ctx.globalCompositeOperation = "source-over";
   }
+
+  drawWatermark(ctx, W, H, activeFont);
 }
