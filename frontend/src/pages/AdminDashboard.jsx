@@ -41,6 +41,189 @@ export default function AdminDashboard() {
   const [previewImageUrl, setPreviewImageUrl] = useState('');
   const [downloadFileUrl, setDownloadFileUrl] = useState('');
 
+  // Auto-detection states
+  const [detectedMetadata, setDetectedMetadata] = useState(null);
+  const [isAnalyzing, setIsAnalyzing] = useState(false);
+
+  // Helper to extract dimensions from an image file
+  const getImageDimensions = (file) => {
+    return new Promise((resolve, reject) => {
+      const url = URL.createObjectURL(file);
+      const img = new window.Image();
+      img.onload = () => {
+        URL.revokeObjectURL(url);
+        resolve({ width: img.naturalWidth, height: img.naturalHeight });
+      };
+      img.onerror = (e) => {
+        URL.revokeObjectURL(url);
+        reject(new Error('Failed to load image file'));
+      };
+      img.src = url;
+    });
+  };
+
+  // Helper to extract dimensions from a video file
+  const getVideoDimensions = (file) => {
+    return new Promise((resolve, reject) => {
+      const url = URL.createObjectURL(file);
+      const video = document.createElement('video');
+      video.preload = 'metadata';
+      video.onloadedmetadata = () => {
+        URL.revokeObjectURL(url);
+        resolve({ width: video.videoWidth, height: video.videoHeight });
+      };
+      video.onerror = (e) => {
+        URL.revokeObjectURL(url);
+        reject(new Error('Failed to load video file'));
+      };
+      video.src = url;
+    });
+  };
+
+  // Helper to resolve dimensions from an asset URL (handles CORS limitations gracefully)
+  const getUrlDimensions = (url) => {
+    return new Promise((resolve, reject) => {
+      const img = new window.Image();
+      img.crossOrigin = 'anonymous';
+      img.onload = () => {
+        resolve({ width: img.naturalWidth, height: img.naturalHeight, type: 'image' });
+      };
+      img.onerror = () => {
+        const video = document.createElement('video');
+        video.crossOrigin = 'anonymous';
+        video.preload = 'metadata';
+        video.onloadedmetadata = () => {
+          resolve({ width: video.videoWidth, height: video.videoHeight, type: 'video' });
+        };
+        video.onerror = (e) => {
+          reject(new Error('Failed to load asset from URL'));
+        };
+        video.src = url;
+      };
+      img.src = url;
+    });
+  };
+
+  // Helper to format file sizes
+  const formatBytes = (bytes, decimals = 2) => {
+    if (bytes === 0) return '0 Bytes';
+    const k = 1024;
+    const dm = decimals < 0 ? 0 : decimals;
+    const sizes = ['Bytes', 'KB', 'MB', 'GB', 'TB'];
+    const i = Math.floor(Math.log(bytes) / Math.log(k));
+    return parseFloat((bytes / Math.pow(k, i)).toFixed(dm)) + ' ' + sizes[i];
+  };
+
+  // Helper to get simplified aspect ratios
+  const getAspectRatio = (width, height) => {
+    const decimal = width / height;
+    const tolerance = 0.05;
+    const standards = [
+      { name: '16:9', val: 16 / 9 },
+      { name: '9:16', val: 9 / 16 },
+      { name: '16:10', val: 16 / 10 },
+      { name: '10:16', val: 10 / 16 },
+      { name: '4:3', val: 4 / 3 },
+      { name: '3:4', val: 3 / 4 },
+      { name: '21:9', val: 21 / 9 },
+      { name: '9:21', val: 9 / 21 },
+      { name: '1:1', val: 1 },
+      { name: '19.5:9', val: 19.5 / 9 },
+      { name: '9:19.5', val: 9 / 19.5 },
+    ];
+    const match = standards.find((s) => Math.abs(s.val - decimal) < tolerance);
+    if (match) return match.name;
+
+    const findGcd = (a, b) => (b === 0 ? a : findGcd(b, a % b));
+    const g = findGcd(width, height);
+    const w = Math.round(width / g);
+    const h = Math.round(height / g);
+    if (w > 100 || h > 100) {
+      return `${decimal.toFixed(2)}:1`;
+    }
+    return `${w}:${h}`;
+  };
+
+  // Main asset analyzer method
+  const analyzeAsset = async (fileOrUrl, isFile = true) => {
+    if (!fileOrUrl) return;
+
+    setIsAnalyzing(true);
+    setDetectedMetadata(null);
+    try {
+      let width = 0;
+      let height = 0;
+      let sizeBytes = 0;
+      let format = '';
+      let name = '';
+
+      if (isFile) {
+        const file = fileOrUrl;
+        sizeBytes = file.size;
+        format = file.type;
+        name = file.name;
+
+        const ext = file.name ? file.name.split('.').pop().toLowerCase() : '';
+        const isImage = file.type?.startsWith('image/') || ['jpg', 'jpeg', 'jfif', 'png', 'webp', 'gif', 'svg', 'bmp', 'ico'].includes(ext);
+        const isVideo = file.type?.startsWith('video/') || ['mp4', 'webm', 'ogg', 'mov', 'avi', 'mkv', 'm4v'].includes(ext);
+
+        if (isImage) {
+          const res = await getImageDimensions(file);
+          width = res.width;
+          height = res.height;
+          if (!format) format = 'image/' + (ext || 'unknown');
+        } else if (isVideo) {
+          const res = await getVideoDimensions(file);
+          width = res.width;
+          height = res.height;
+          if (!format) format = 'video/' + (ext || 'unknown');
+        } else {
+          throw new Error('File type not supported for automatic resolution detection');
+        }
+      } else {
+        const url = fileOrUrl;
+        name = url.split('/').pop()?.substring(0, 30) || 'URL Asset';
+        const res = await getUrlDimensions(url);
+        width = res.width;
+        height = res.height;
+        format = res.type === 'video' ? 'video/unknown' : 'image/unknown';
+      }
+
+      if (width && height) {
+        const resStr = `${width}x${height}`;
+        setResolution(resStr);
+
+        // Auto-detect device type: portrait is mobile, landscape/square is desktop
+        if (height > width) {
+          setDeviceType('mobile');
+        } else {
+          setDeviceType('desktop');
+        }
+
+        const mp = ((width * height) / 1000000).toFixed(1);
+        const ratio = getAspectRatio(width, height);
+
+        setDetectedMetadata({
+          name,
+          resolution: resStr,
+          width,
+          height,
+          megapixels: mp,
+          aspectRatio: ratio,
+          fileSize: sizeBytes ? formatBytes(sizeBytes) : null,
+          format: format ? format.split('/').pop().toUpperCase() : 'UNKNOWN',
+        });
+        
+        addToast(`Auto-detected: ${resStr} (${ratio})`, 'success');
+      }
+    } catch (err) {
+      console.warn('Metadata analysis failed:', err);
+      // Soft fail: don't block flow, just let them fill manually
+    } finally {
+      setIsAnalyzing(false);
+    }
+  };
+
   // Router protection
   useEffect(() => {
     if (!isAuthenticated) {
@@ -77,6 +260,8 @@ export default function AdminDashboard() {
     setDownloadFileFile(null);
     setPreviewImageUrl('');
     setDownloadFileUrl('');
+    setDetectedMetadata(null);
+    setIsAnalyzing(false);
     setModalOpen(true);
   };
 
@@ -95,6 +280,8 @@ export default function AdminDashboard() {
     setDownloadFileFile(null);
     setPreviewImageUrl(wp.previewImage || '');
     setDownloadFileUrl(wp.downloadFile || '');
+    setDetectedMetadata(null);
+    setIsAnalyzing(false);
     setModalOpen(true);
   };
 
@@ -268,7 +455,7 @@ export default function AdminDashboard() {
           <h1 className="font-display font-black text-3xl text-white">Admin Dashboard</h1>
         </div>
 
-        <div className="flex items-center gap-2">
+        <div className="flex flex-wrap items-center gap-2">
           {/* Tab switches */}
           {['overview', 'wallpapers', 'users', 'purchases'].map((tab) => (
             <button
@@ -287,13 +474,13 @@ export default function AdminDashboard() {
       </div>
 
       {/* Overview Cards Row */}
-      <div className="grid grid-cols-2 lg:grid-cols-4 gap-6">
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-6">
         {overviewCards.map((c) => (
-          <div key={c.label} className="p-6 rounded-2xl glass-panel flex items-center gap-4">
-            <div className="p-3 bg-white/5 rounded-xl">{c.icon}</div>
-            <div>
-              <p className="text-[10px] font-bold text-gray-500 uppercase tracking-wide">{c.label}</p>
-              <h3 className="font-display font-black text-xl text-white mt-0.5">{c.value}</h3>
+          <div key={c.label} className="p-4 sm:p-6 rounded-2xl glass-panel flex items-center gap-3 sm:gap-4">
+            <div className="p-2.5 sm:p-3 bg-white/5 rounded-xl shrink-0">{c.icon}</div>
+            <div className="min-w-0">
+              <p className="text-[9px] sm:text-[10px] font-bold text-gray-500 uppercase tracking-wide truncate">{c.label}</p>
+              <h3 className="font-display font-black text-lg sm:text-xl text-white mt-0.5 truncate">{c.value}</h3>
             </div>
           </div>
         ))}
@@ -305,7 +492,7 @@ export default function AdminDashboard() {
       {activeTab === 'overview' && (
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-8">
           {/* Revenue Chart */}
-          <div className="lg:col-span-6 p-6 rounded-3xl glass-panel space-y-4">
+          <div className="lg:col-span-6 p-4 sm:p-6 rounded-3xl glass-panel space-y-4">
             <h3 className="font-display font-bold text-sm text-white flex items-center gap-1">
               <DollarSign className="w-4 h-4 text-primary" /> Monthly Revenue Trend
             </h3>
@@ -315,7 +502,7 @@ export default function AdminDashboard() {
           </div>
 
           {/* Downloads Chart */}
-          <div className="lg:col-span-6 p-6 rounded-3xl glass-panel space-y-4">
+          <div className="lg:col-span-6 p-4 sm:p-6 rounded-3xl glass-panel space-y-4">
             <h3 className="font-display font-bold text-sm text-white flex items-center gap-1">
               <Download className="w-4 h-4 text-accent" /> Monthly Downloads Trend
             </h3>
@@ -344,13 +531,13 @@ export default function AdminDashboard() {
             </div>
           </div>
 
-          <div className="lg:col-span-7 p-6 rounded-3xl glass-panel space-y-4">
+          <div className="lg:col-span-7 p-4 sm:p-6 rounded-3xl glass-panel space-y-4">
             <h3 className="font-display font-bold text-sm text-white">Recent Log Activity</h3>
             <div className="space-y-3 h-80 overflow-y-auto pr-1">
               {analytics?.recentActivity?.map((act) => (
-                <div key={act._id} className="flex items-center justify-between text-xs border-b border-white/5 pb-2">
-                  <div>
-                    <span className={`px-2 py-0.5 rounded text-[8px] font-bold uppercase mr-2 ${
+                <div key={act._id} className="flex flex-col sm:flex-row sm:items-center justify-between text-xs border-b border-white/5 pb-2 gap-1.5 sm:gap-4">
+                  <div className="truncate min-w-0">
+                    <span className={`inline-block px-2 py-0.5 rounded text-[8px] font-bold uppercase mr-2 ${
                       act.type === 'purchase' ? 'bg-amber-500/10 text-amber-400 border border-amber-500/20' :
                       act.type === 'signup' ? 'bg-primary/10 text-primary border border-primary/20' :
                       'bg-cyan-500/10 text-cyan-400 border border-cyan-500/20'
@@ -360,7 +547,7 @@ export default function AdminDashboard() {
                     <span className="font-semibold text-white">{act.user}</span>
                     <span className="text-gray-400"> - {act.item}</span>
                   </div>
-                  <div className="text-right text-gray-500">
+                  <div className="text-left sm:text-right text-gray-500 shrink-0">
                     <p className="font-medium text-white">{act.details}</p>
                     <p className="text-[9px]">{new Date(act.createdAt).toLocaleDateString()}</p>
                   </div>
@@ -387,8 +574,8 @@ export default function AdminDashboard() {
 
           <div className="grid grid-cols-1 gap-4">
             {/* Simple table/list of wallpapers */}
-            <div className="rounded-2xl border border-white/5 overflow-hidden">
-              <table className="w-full text-left border-collapse text-xs select-none">
+            <div className="rounded-2xl border border-white/5 overflow-x-auto">
+              <table className="w-full text-left border-collapse text-xs select-none min-w-[650px]">
                 <thead>
                   <tr className="bg-white/2 text-gray-400 font-semibold border-b border-white/5">
                     <th className="p-4">Artwork</th>
@@ -454,8 +641,8 @@ export default function AdminDashboard() {
       {activeTab === 'users' && (
         <div className="space-y-4">
           <h2 className="font-display font-bold text-lg text-white">Registered Users</h2>
-          <div className="rounded-2xl border border-white/5 overflow-hidden">
-            <table className="w-full text-left border-collapse text-xs select-none">
+          <div className="rounded-2xl border border-white/5 overflow-x-auto">
+            <table className="w-full text-left border-collapse text-xs select-none min-w-[500px]">
               <thead>
                 <tr className="bg-white/2 text-gray-400 font-semibold border-b border-white/5">
                   <th className="p-4">Name</th>
@@ -481,8 +668,8 @@ export default function AdminDashboard() {
       {activeTab === 'purchases' && (
         <div className="space-y-4">
           <h2 className="font-display font-bold text-lg text-white">Sales Logs</h2>
-          <div className="rounded-2xl border border-white/5 overflow-hidden">
-            <table className="w-full text-left border-collapse text-xs select-none">
+          <div className="rounded-2xl border border-white/5 overflow-x-auto">
+            <table className="w-full text-left border-collapse text-xs select-none min-w-[600px]">
               <thead>
                 <tr className="bg-white/2 text-gray-400 font-semibold border-b border-white/5">
                   <th className="p-4">User</th>
@@ -590,15 +777,19 @@ export default function AdminDashboard() {
 
                 {/* Resolution */}
                 <div className="space-y-1.5">
-                  <label className="text-[10px] font-bold text-gray-400 uppercase tracking-wide">Resolution</label>
+                  <div className="flex justify-between items-center">
+                    <label className="text-[10px] font-bold text-gray-400 uppercase tracking-wide">Resolution</label>
+                    <span className="text-[8px] text-gray-400 font-bold font-mono uppercase bg-white/5 border border-white/10 px-1.5 py-0.5 rounded tracking-wider">Editable</span>
+                  </div>
                   <input
                     type="text"
                     value={resolution}
                     onChange={(e) => setResolution(e.target.value)}
-                    className="w-full px-3 py-2 text-xs glass-input focus:bg-[#121212]"
+                    className="w-full px-3 py-2 text-xs glass-input focus:bg-[#121212] border border-white/5 focus:border-primary/50 transition-colors"
                     placeholder="3840x2160"
                     required
                   />
+                  <p className="text-[9px] text-gray-500 italic">Auto-filled on upload. You can manually type custom dimensions.</p>
                 </div>
 
                 {/* Premium toggle */}
@@ -652,7 +843,13 @@ export default function AdminDashboard() {
                       <label className="text-[10px] font-bold text-gray-400 uppercase tracking-wide">Preview Image</label>
                       <input
                         type="file"
-                        onChange={(e) => setPreviewImageFile(e.target.files[0])}
+                        onChange={(e) => {
+                          const file = e.target.files[0];
+                          setPreviewImageFile(file);
+                          if (file && !downloadFileFile) {
+                            analyzeAsset(file, true);
+                          }
+                        }}
                         className="w-full text-xs text-gray-400 file:mr-2 file:py-1.5 file:px-3 file:rounded-lg file:border-0 file:text-[10px] file:font-semibold file:bg-white/5 file:text-white file:hover:bg-white/10"
                       />
                       <input
@@ -660,6 +857,11 @@ export default function AdminDashboard() {
                         placeholder="Or paste URL link"
                         value={previewImageUrl}
                         onChange={(e) => setPreviewImageUrl(e.target.value)}
+                        onBlur={() => {
+                          if (previewImageUrl && !downloadFileFile && !downloadFileUrl) {
+                            analyzeAsset(previewImageUrl, false);
+                          }
+                        }}
                         className="w-full px-3 py-2 text-xs glass-input focus:bg-[#121212]"
                       />
                     </div>
@@ -669,7 +871,13 @@ export default function AdminDashboard() {
                       <label className="text-[10px] font-bold text-gray-400 uppercase tracking-wide">High-Res Asset File</label>
                       <input
                         type="file"
-                        onChange={(e) => setDownloadFileFile(e.target.files[0])}
+                        onChange={(e) => {
+                          const file = e.target.files[0];
+                          setDownloadFileFile(file);
+                          if (file) {
+                            analyzeAsset(file, true);
+                          }
+                        }}
                         className="w-full text-xs text-gray-400 file:mr-2 file:py-1.5 file:px-3 file:rounded-lg file:border-0 file:text-[10px] file:font-semibold file:bg-white/5 file:text-white file:hover:bg-white/10"
                       />
                       <input
@@ -677,11 +885,62 @@ export default function AdminDashboard() {
                         placeholder="Or paste URL link (mp4 for Live)"
                         value={downloadFileUrl}
                         onChange={(e) => setDownloadFileUrl(e.target.value)}
+                        onBlur={() => {
+                          if (downloadFileUrl) {
+                            analyzeAsset(downloadFileUrl, false);
+                          }
+                        }}
                         className="w-full px-3 py-2 text-xs glass-input focus:bg-[#121212]"
                       />
                     </div>
                   </div>
                 </div>
+
+                {/* Auto-detected Metadata Info Card */}
+                {(isAnalyzing || detectedMetadata) && (
+                  <div className="col-span-2 p-4 bg-white/5 border border-white/10 rounded-2xl space-y-3 animate-fade-in">
+                    <div className="flex items-center justify-between">
+                      <h4 className="text-[10px] font-bold text-primary flex items-center gap-1.5 uppercase tracking-wider">
+                        <Sparkles className="w-3.5 h-3.5 text-primary animate-pulse" />
+                        Auto-detected Asset Info
+                      </h4>
+                      {isAnalyzing && (
+                        <span className="flex items-center gap-1 text-[9px] text-gray-400">
+                          <Loader2 className="w-3 h-3 animate-spin text-primary" />
+                          Analyzing file...
+                        </span>
+                      )}
+                      {!isAnalyzing && (
+                        <span className="px-2 py-0.5 rounded-full bg-emerald-500/10 text-emerald-400 border border-emerald-500/20 text-[8px] font-bold font-mono">
+                          Parsed
+                        </span>
+                      )}
+                    </div>
+                    
+                    {detectedMetadata && (
+                      <div className="grid grid-cols-2 md:grid-cols-4 gap-3 text-xs">
+                        <div className="space-y-0.5 bg-black/20 p-2.5 rounded-xl border border-white/5">
+                          <p className="text-[9px] text-gray-500 uppercase font-semibold">Resolution</p>
+                          <p className="font-bold text-white font-mono">{detectedMetadata.resolution}</p>
+                        </div>
+                        <div className="space-y-0.5 bg-black/20 p-2.5 rounded-xl border border-white/5">
+                          <p className="text-[9px] text-gray-500 uppercase font-semibold">Aspect Ratio</p>
+                          <p className="font-bold text-white font-mono">{detectedMetadata.aspectRatio}</p>
+                        </div>
+                        <div className="space-y-0.5 bg-black/20 p-2.5 rounded-xl border border-white/5">
+                          <p className="text-[9px] text-gray-500 uppercase font-semibold">Total Pixels</p>
+                          <p className="font-bold text-white font-mono">{detectedMetadata.megapixels} MP</p>
+                        </div>
+                        <div className="space-y-0.5 bg-black/20 p-2.5 rounded-xl border border-white/5">
+                          <p className="text-[9px] text-gray-500 uppercase font-semibold">Format & Size</p>
+                          <p className="font-bold text-white truncate" title={`${detectedMetadata.format} ${detectedMetadata.fileSize || ''}`}>
+                            {detectedMetadata.format} {detectedMetadata.fileSize ? `(${detectedMetadata.fileSize})` : ''}
+                          </p>
+                        </div>
+                      </div>
+                    )}
+                  </div>
+                )}
               </div>
 
               <div className="flex justify-end gap-2 border-t border-white/5 pt-4">

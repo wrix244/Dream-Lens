@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { Mail, Send, HelpCircle, ShieldCheck, Scale, Globe, MessageSquare, AlertCircle } from 'lucide-react';
 import { motion } from 'framer-motion';
+import axios from 'axios';
 import useUIStore from '../store/uiStore';
 
 export default function Contact() {
@@ -18,7 +19,7 @@ export default function Contact() {
     setFormData((prev) => ({ ...prev, [name]: value }));
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
     const { name, email, subject, message } = formData;
 
@@ -34,12 +35,20 @@ export default function Contact() {
 
     setSubmitting(true);
     
-    // Simulate API call
-    setTimeout(() => {
-      addToast('Your message has been sent successfully. We will respond promptly!', 'success');
-      setFormData({ name: '', email: '', subject: '', message: '' });
+    try {
+      const response = await axios.post('/api/contact', formData);
+      if (response.data && response.data.success) {
+        addToast(response.data.message || 'Your message has been sent successfully!', 'success');
+        setFormData({ name: '', email: '', subject: '', message: '' });
+      } else {
+        addToast(response.data.message || 'Failed to send message. Please try again.', 'error');
+      }
+    } catch (error) {
+      const errorMsg = error.response?.data?.message || 'Error occurred while sending the message. Please try again later.';
+      addToast(errorMsg, 'error');
+    } finally {
       setSubmitting(false);
-    }, 1500);
+    }
   };
 
   return (
@@ -197,7 +206,7 @@ export default function Contact() {
                   value={formData.name}
                   onChange={handleChange}
                   placeholder="John Doe"
-                  className="w-full text-xs glass-input focus:bg-slate-900/80"
+                  className="w-full text-xs glass-input focus:bg-slate-900/80 p-2"
                   required
                 />
               </div>
@@ -211,7 +220,7 @@ export default function Contact() {
                   value={formData.email}
                   onChange={handleChange}
                   placeholder="johndoe@example.com"
-                  className="w-full text-xs glass-input focus:bg-slate-900/80"
+                  className="w-full text-xs glass-input focus:bg-slate-900/80 p-2"
                   required
                 />
               </div>
@@ -225,7 +234,7 @@ export default function Contact() {
                   value={formData.subject}
                   onChange={handleChange}
                   placeholder="Inquiry Subject"
-                  className="w-full text-xs glass-input focus:bg-slate-900/80"
+                  className="w-full text-xs glass-input focus:bg-slate-900/80 p-2"
                   required
                 />
               </div>
@@ -239,7 +248,7 @@ export default function Contact() {
                   onChange={handleChange}
                   placeholder="Describe your request in detail..."
                   rows="4"
-                  className="w-full text-xs glass-input focus:bg-slate-900/80 resize-none"
+                  className="w-full text-xs glass-input focus:bg-slate-900/80 resize-none p-2"
                   required
                 />
               </div>
