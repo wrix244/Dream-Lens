@@ -22,6 +22,25 @@
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
   }
+
+  /* Standardise interactive cursor pointers globally */
+  a,
+  button,
+  select,
+  input[type="submit"],
+  input[type="button"],
+  input[type="reset"],
+  [role="button"],
+  [role="link"] {
+    cursor: pointer;
+  }
+
+  /* Disabled state cursors */
+  button:disabled,
+  input:disabled,
+  [disabled] {
+    cursor: not-allowed;
+  }
 }
 
 /* Custom Scrollbar — Spray Paint Style */
