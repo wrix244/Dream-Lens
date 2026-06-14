@@ -33,6 +33,8 @@ import CookiePolicy from './pages/CookiePolicy';
 import Disclaimer from './pages/Disclaimer';
 import Contact from './pages/Contact';
 
+const API_URL = import.meta.env.VITE_API_URL;
+
 export default function App() {
   const location = useLocation();
   const initTheme = useThemeStore((s) => s.initTheme);
@@ -126,7 +128,7 @@ export default function App() {
   // Global heartbeat — pings every 10s so the server knows this tab is alive
   useEffect(() => {
     const sendHeartbeat = () => {
-      axios.post('/api/stats/heartbeat', {
+      axios.post(`${API_URL}/api/stats/heartbeat`, {
         sessionId: sessionId.current,
         page: location.pathname,
       }).catch(() => {});
