@@ -6,6 +6,9 @@ import { getCookie, setCookie, eraseCookie } from '../utils/cookies';
 const initialToken = getCookie('token') || null;
 const initialUser = JSON.parse(getCookie('user') || 'null');
 
+// Set global API URL for Axios (useful for production deploys like Cloudflare + Render)
+axios.defaults.baseURL = import.meta.env.VITE_API_URL || '';
+
 // Setup default axios authorization header if token exists
 if (initialToken) {
   axios.defaults.headers.common['Authorization'] = `Bearer ${initialToken}`;
