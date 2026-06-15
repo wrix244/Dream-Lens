@@ -32,6 +32,7 @@ import Copyright from './pages/Copyright';
 import CookiePolicy from './pages/CookiePolicy';
 import Disclaimer from './pages/Disclaimer';
 import Contact from './pages/Contact';
+import NotFound from './pages/NotFound';
 
 const API_URL = import.meta.env.VITE_API_URL;
 
@@ -168,7 +169,7 @@ export default function App() {
           <Route path="/cookies" element={<CookiePolicy />} />
           <Route path="/disclaimer" element={<Disclaimer />} />
           <Route path="/contact" element={<Contact />} />
-          <Route path="*" element={<Home />} />
+          <Route path="*" element={<NotFound />} />
         </Routes>
       </main>
 
