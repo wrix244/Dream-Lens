@@ -16,7 +16,8 @@ export const recordDownload = async (req, res) => {
     }
 
     // Security Check: If it is a premium wallpaper, verify the user has purchased it.
-    if (wallpaper.isPremium) {
+    // Admin users bypass the purchase check.
+    if (wallpaper.isPremium && req.user?.role !== 'admin') {
       if (!userId) {
         return res.status(403).json({ success: false, message: 'Authentication required for premium wallpapers' });
       }
