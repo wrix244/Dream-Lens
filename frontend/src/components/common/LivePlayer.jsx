@@ -4,7 +4,7 @@ import { Play, Volume2, VolumeX } from 'lucide-react';
 export default function LivePlayer({ src, poster, autoplay = false, hoverToPlay = false, className = '' }) {
   const videoRef = useRef(null);
   const [isPlaying, setIsPlaying] = useState(autoplay);
-  const [isLoading, setIsLoading] = useState(true);
+  const [isLoading, setIsLoading] = useState(false);
   const [isMuted, setIsMuted] = useState(true);
 
   useEffect(() => {
