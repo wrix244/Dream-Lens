@@ -172,11 +172,11 @@ export default function App() {
     <ReactLenis 
       root 
       options={{
-        duration: 1.6,
+        duration: 1.1,
         easing: (t) => Math.min(1, 1.001 - Math.pow(2, -10 * t)), // exponential ease-out
-        lerp: 0.08, // lower values make scrolling slide longer and smoother
+        lerp: 0.12, // slightly higher value makes scroll catch up faster and feel snappier
         smoothWheel: true,
-        wheelMultiplier: 1.15,
+        wheelMultiplier: 1.0,
       }}
     >
       <div className="flex flex-col min-h-screen bg-[#121212]">

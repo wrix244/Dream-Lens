@@ -61,6 +61,7 @@ export default function LivePlayer({ src, poster, autoplay = false, hoverToPlay 
         loop
         muted={isMuted}
         playsInline
+        preload="none"
         onLoadStart={() => setIsLoading(true)}
         onCanPlay={() => setIsLoading(false)}
         className="w-full h-full object-cover"
