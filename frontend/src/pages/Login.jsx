@@ -129,11 +129,12 @@ export default function Login() {
           
           {/* Email input */}
           <div className="space-y-1.5">
-            <label className="text-[10px] font-bold text-gray-400 uppercase tracking-wide">Email Address</label>
+            <label htmlFor="email" className="text-[10px] font-bold text-gray-400 uppercase tracking-wide">Email Address</label>
             <div className="relative">
               <Mail className="absolute left-3.5 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-500" />
               <input
                 type="email"
+                id="email"
                 placeholder="you@example.com"
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
@@ -146,12 +147,13 @@ export default function Login() {
           {/* Password input */}
           <div className="space-y-1.5">
             <div className="flex justify-between items-center">
-              <label className="text-[10px] font-bold text-gray-400 uppercase tracking-wide">Password</label>
+              <label htmlFor="password" className="text-[10px] font-bold text-gray-400 uppercase tracking-wide">Password</label>
             </div>
             <div className="relative">
               <Lock className="absolute left-3.5 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-500" />
               <input
                 type="password"
+                id="password"
                 placeholder="••••••••"
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}

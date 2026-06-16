@@ -186,6 +186,7 @@ export default function Navbar() {
         <div className="flex md:hidden items-center">
           <button
             onClick={() => setIsOpen(!isOpen)}
+            aria-label={isOpen ? 'Close navigation menu' : 'Open navigation menu'}
             className="p-1 text-gray-400 hover:text-white transition-colors"
           >
             {isOpen ? <X className="w-6 h-6" /> : <Menu className="w-6 h-6" />}

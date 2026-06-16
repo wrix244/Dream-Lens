@@ -126,6 +126,7 @@ export default function WallpaperCard({ wallpaper, purchased = false }) {
           <button
             onClick={handleLike}
             disabled={toggleLikeMutation.isPending}
+            aria-label="Like wallpaper"
             className={`p-2 rounded-full backdrop-blur-md border border-white/10 transition-all ${
               isLiked
                 ? 'bg-rose-500/80 border-rose-500/20 text-white'
@@ -140,6 +141,7 @@ export default function WallpaperCard({ wallpaper, purchased = false }) {
           <button
             onClick={handleFavorite}
             disabled={toggleFavMutation.isPending}
+            aria-label="Save wallpaper"
             className={`p-2 rounded-full backdrop-blur-md border border-white/10 transition-all ${
               isFavorite
                 ? 'bg-amber-500/80 border-amber-500/20 text-white'

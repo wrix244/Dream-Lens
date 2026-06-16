@@ -130,11 +130,12 @@ export default function Register() {
           
           {/* Name Input */}
           <div className="space-y-1.5">
-            <label className="text-[10px] font-bold text-gray-400 uppercase tracking-wide">Full Name</label>
+            <label htmlFor="name" className="text-[10px] font-bold text-gray-400 uppercase tracking-wide">Full Name</label>
             <div className="relative">
               <User className="absolute left-3.5 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-500" />
               <input
                 type="text"
+                id="name"
                 placeholder="John Doe"
                 value={name}
                 onChange={(e) => setName(e.target.value)}
@@ -146,11 +147,12 @@ export default function Register() {
 
           {/* Email input */}
           <div className="space-y-1.5">
-            <label className="text-[10px] font-bold text-gray-400 uppercase tracking-wide">Email Address</label>
+            <label htmlFor="email" className="text-[10px] font-bold text-gray-400 uppercase tracking-wide">Email Address</label>
             <div className="relative">
               <Mail className="absolute left-3.5 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-500" />
               <input
                 type="email"
+                id="email"
                 placeholder="you@example.com"
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
@@ -162,11 +164,12 @@ export default function Register() {
 
           {/* Password input */}
           <div className="space-y-1.5">
-            <label className="text-[10px] font-bold text-gray-400 uppercase tracking-wide">Password</label>
+            <label htmlFor="password" className="text-[10px] font-bold text-gray-400 uppercase tracking-wide">Password</label>
             <div className="relative">
               <Lock className="absolute left-3.5 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-500" />
               <input
                 type="password"
+                id="password"
                 placeholder="••••••••"
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}

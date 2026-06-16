@@ -357,6 +357,7 @@ export default function Details() {
                     <button
                       onClick={handleLike}
                       disabled={toggleLikeMutation.isPending}
+                      aria-label="Like wallpaper"
                       className={`p-3.5 rounded-xl border transition-all ${
                         isLiked
                           ? 'bg-rose-500/80 border-rose-500/20 text-white'
@@ -371,6 +372,7 @@ export default function Details() {
                     <button
                       onClick={handleFavorite}
                       disabled={toggleFavMutation.isPending}
+                      aria-label="Save wallpaper"
                       className={`p-3.5 rounded-xl border transition-all ${
                         isFavorite
                           ? 'bg-amber-500/80 border-amber-500/20 text-white'
@@ -408,6 +410,7 @@ export default function Details() {
                   <button
                     onClick={handleLike}
                     disabled={toggleLikeMutation.isPending}
+                    aria-label="Like wallpaper"
                     className={`p-3.5 rounded-xl border transition-all ${
                       isLiked
                         ? 'bg-rose-500/80 border-rose-500/20 text-white'
@@ -422,6 +425,7 @@ export default function Details() {
                   <button
                     onClick={handleFavorite}
                     disabled={toggleFavMutation.isPending}
+                    aria-label="Save wallpaper"
                     className={`p-3.5 rounded-xl border transition-all ${
                       isFavorite
                         ? 'bg-amber-500/80 border-amber-500/20 text-white'
