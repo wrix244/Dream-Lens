@@ -78,7 +78,17 @@ export default function Login() {
     <div className="pt-24 pb-16 min-h-[90vh] flex items-center justify-center px-4 relative overflow-hidden">
       {/* Theme-aware auth background */}
       <div className="absolute inset-0 z-0">
-        <img src={theme === 'space' ? '/space-bg.webp' : '/graffiti-bg.webp'} alt="" className="w-full h-full object-cover" />
+        <img 
+          src={theme === 'space' ? '/space-bg.webp' : '/graffiti-bg.webp'} 
+          srcSet={
+            theme === 'space'
+              ? '/space-bg-mobile.webp 640w, /space-bg.webp 1024w'
+              : '/graffiti-bg-mobile.webp 640w, /graffiti-bg.webp 1024w'
+          }
+          sizes="(max-width: 640px) 640px, 1024px"
+          alt="" 
+          className="w-full h-full object-cover" 
+        />
         <div className={`absolute inset-0 ${theme === 'space' ? 'bg-[#0B0F19]/70' : 'bg-[#121212]/75'}`} />
         <div className={`absolute inset-0 bg-gradient-to-t ${theme === 'space' ? 'from-[#0B0F19] via-transparent to-[#0B0F19]/80' : 'from-[#121212] via-transparent to-[#121212]/80'}`} />
       </div>

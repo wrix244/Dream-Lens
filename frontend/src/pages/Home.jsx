@@ -74,6 +74,12 @@ export default function Home() {
         <div className="absolute inset-0 z-0">
           <img
             src={theme === 'space' ? '/space-hero.webp' : '/graffiti-hero.webp'}
+            srcSet={
+              theme === 'space'
+                ? '/space-hero-mobile.webp 640w, /space-hero.webp 1024w'
+                : '/graffiti-hero-mobile.webp 640w, /graffiti-hero.webp 1024w'
+            }
+            sizes="(max-width: 640px) 640px, 1024px"
             alt=""
             fetchpriority="high"
             loading="eager"
