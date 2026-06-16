@@ -164,7 +164,7 @@ export default function WallpaperCard({ wallpaper, purchased = false }) {
         </div>
 
         {/* Interactive Action Bar (revealed on hover, desktop only) */}
-        <div className="hidden md:flex items-center justify-between mt-3 pt-3 border-t border-white/5 opacity-0 group-hover:opacity-100 transition-opacity duration-300 pointer-events-auto">
+        <div className="hidden md:flex items-center justify-between mt-3 pt-3 border-t border-white/5 opacity-0 group-hover:opacity-100 transition-opacity duration-300 pointer-events-none group-hover:pointer-events-auto">
           <span className="font-display font-bold text-sm text-white">
             {wallpaper.isPremium ? (hasAccess ? <span className="text-emerald-400 flex items-center gap-0.5 text-xs"><Check className="w-3.5 h-3.5"/> Unlocked</span> : `$${wallpaper.price.toFixed(2)}`) : 'Free'}
           </span>

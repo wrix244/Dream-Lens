@@ -106,17 +106,19 @@
   z-index: 5;
 }
 
-.glass-card:hover {
-  background: rgba(26, 26, 26, 0.8);
-  border-color: rgba(255, 45, 111, 0.3);
-  box-shadow:
-    0 0 25px -5px rgba(255, 45, 111, 0.15),
-    0 10px 30px -10px rgba(0, 0, 0, 0.6);
-  transform: translateY(-4px);
-}
+@media (hover: hover) {
+  .glass-card:hover {
+    background: rgba(26, 26, 26, 0.8);
+    border-color: rgba(255, 45, 111, 0.3);
+    box-shadow:
+      0 0 25px -5px rgba(255, 45, 111, 0.15),
+      0 10px 30px -10px rgba(0, 0, 0, 0.6);
+    transform: translateY(-4px);
+  }
 
-.glass-card:hover::before {
-  opacity: 1;
+  .glass-card:hover::before {
+    opacity: 1;
+  }
 }
 
 /* Graffiti Input — Tagged Style */
@@ -296,12 +298,14 @@ html[data-theme="space"] .glass-card::before {
   background: linear-gradient(90deg, transparent, #7C3AED, #A855F7, #06B6D4, transparent);
 }
 
-html[data-theme="space"] .glass-card:hover {
-  background: rgba(17, 24, 39, 0.7);
-  border-color: rgba(124, 58, 237, 0.25);
-  box-shadow:
-    0 0 30px -5px rgba(124, 58, 237, 0.12),
-    0 10px 30px -10px rgba(0, 0, 0, 0.6);
+@media (hover: hover) {
+  html[data-theme="space"] .glass-card:hover {
+    background: rgba(17, 24, 39, 0.7);
+    border-color: rgba(124, 58, 237, 0.25);
+    box-shadow:
+      0 0 30px -5px rgba(124, 58, 237, 0.12),
+      0 10px 30px -10px rgba(0, 0, 0, 0.6);
+  }
 }
 
 html[data-theme="space"] .glass-input {
