@@ -1,6 +1,5 @@
 import React from 'react';
 import { Link, useNavigate } from 'react-router-dom';
-import { motion } from 'framer-motion';
 import SEO from '../components/common/SEO';
 import { Compass, Sparkles, TrendingUp, Clock, Eye, Layers, ShieldCheck, Download, Award, Heart, CheckCircle } from 'lucide-react';
 import { useTrendingWallpapers, useLatestWallpapers, useRecommendedWallpapers } from '../hooks/useWallpapers';
@@ -96,11 +95,7 @@ export default function Home() {
         <div className="absolute top-1/3 right-1/4 w-[300px] h-[300px] rounded-full bg-secondary/10 blur-[80px] pointer-events-none z-[1]" />
 
         <div className="max-w-4xl mx-auto text-center space-y-8 relative z-10">
-          <motion.div
-            initial={{ opacity: 0, y: -20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.6 }}
-          >
+          <div className="animate-slide-down-hero">
             <div className="inline-flex items-center gap-1 p-1 rounded-full bg-white/5 border border-white/10 backdrop-blur-sm">
               <button
                 onClick={() => setTheme('graffiti')}
@@ -123,37 +118,22 @@ export default function Home() {
                 🚀 Space
               </button>
             </div>
-          </motion.div>
+          </div>
 
-          <motion.h1
-            initial={{ opacity: 0, y: 30 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.8, delay: 0.1 }}
-            className="font-display font-black text-5xl md:text-7xl tracking-tight text-white leading-[1.1]"
-          >
+          <h1 className="font-display font-black text-5xl md:text-7xl tracking-tight text-white leading-[1.1] animate-slide-up-hero-title">
             {theme === 'graffiti' ? 'Splash Art On' : 'Explore The'} <br />
             <span className="text-transparent bg-clip-text bg-gradient-to-r from-primary via-secondary to-accent">
               {theme === 'graffiti' ? 'Every Wall' : 'Cosmos Beyond'}
             </span>
-          </motion.h1>
+          </h1>
 
-          <motion.p
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            transition={{ duration: 1, delay: 0.3 }}
-            className="text-base md:text-lg text-gray-400 max-w-xl mx-auto leading-relaxed"
-          >
+          <p className="text-base md:text-lg text-gray-400 max-w-xl mx-auto leading-relaxed animate-fade-in-hero-para">
             {theme === 'graffiti'
               ? 'Discover a curated collection of ultra-high-definition PC and mobile wallpapers. Experience smooth animations, live motion loops, and premium design.'
               : 'Journey through stunning cosmic wallpapers — nebulae, galaxies, star fields, and deep space vistas. Transform your screen into a portal to the universe.'}
-          </motion.p>
+          </p>
 
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.6, delay: 0.4 }}
-            className="flex flex-wrap justify-center gap-4 pt-4"
-          >
+          <div className="flex flex-wrap justify-center gap-4 pt-4 animate-slide-up-hero-buttons">
             <Link
               to="/explore"
               className="px-8 py-3 rounded-xl bg-primary hover:bg-primary/95 text-white font-semibold text-sm shadow-xl shadow-primary/20 hover:shadow-primary/30 transition-all flex items-center gap-2 btn-glow"
@@ -167,7 +147,7 @@ export default function Home() {
             >
               Explore Premium
             </Link>
-          </motion.div>
+          </div>
         </div>
       </section>
 

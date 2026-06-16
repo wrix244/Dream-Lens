@@ -5,9 +5,6 @@ import axios from 'axios';
 import Navbar from './components/layout/Navbar';
 import Footer from './components/layout/Footer';
 import ScrollToTop from './components/common/ScrollToTop';
-import ToastContainer from './components/common/ToastContainer';
-import InstallPrompt from './components/common/InstallPrompt';
-import CookieConsent from './components/common/CookieConsent';
 import usePWAStore from './store/pwaStore';
 import useThemeStore from './store/themeStore';
 import useUIStore from './store/uiStore';
@@ -39,6 +36,10 @@ const Disclaimer = lazy(() => import('./pages/Disclaimer'));
 const Contact = lazy(() => import('./pages/Contact'));
 const NotFound = lazy(() => import('./pages/NotFound'));
 
+// Lazy Loaded Overlays
+const ToastContainer = lazy(() => import('./components/common/ToastContainer'));
+const InstallPrompt = lazy(() => import('./components/common/InstallPrompt'));
+const CookieConsent = lazy(() => import('./components/common/CookieConsent'));
 
 const API_URL = import.meta.env.VITE_API_URL;
 
@@ -243,13 +244,19 @@ export default function App() {
         </main>
 
         {/* Toast Notification Container */}
-        <ToastContainer />
+        <Suspense fallback={null}>
+          <ToastContainer />
+        </Suspense>
 
         {/* PWA Install Bottom Sheet */}
-        <InstallPrompt />
+        <Suspense fallback={null}>
+          <InstallPrompt />
+        </Suspense>
 
         {/* Cookie Preferences Banner */}
-        <CookieConsent />
+        <Suspense fallback={null}>
+          <CookieConsent />
+        </Suspense>
 
         {/* Global Footer */}
         <Footer />
