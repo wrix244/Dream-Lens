@@ -21,6 +21,8 @@
     overflow-x: hidden;
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
+    -webkit-user-select: none;
+    user-select: none;
   }
 
   /* Standardise interactive cursor pointers globally */
@@ -33,6 +35,16 @@
   [role="button"],
   [role="link"] {
     cursor: pointer;
+    -webkit-user-select: none;
+    user-select: none;
+  }
+
+  /* Enable input selection */
+  input,
+  textarea,
+  [contenteditable="true"] {
+    -webkit-user-select: text;
+    user-select: text;
   }
 
   /* Disabled state cursors */
@@ -380,6 +392,12 @@ html[data-theme="graffiti"] body::before {
 }
 
 /* Policy Container Typography Normalization */
+.policy-container,
+.selectable {
+  -webkit-user-select: text !important;
+  user-select: text !important;
+}
+
 .policy-container .font-display {
   font-family: var(--font-sans) !important;
 }
