@@ -74,7 +74,7 @@ export default function SEO({
     // 4. Open Graph Tags
     setMetaTag('property', 'og:title', is404 ? "Wallpaper Not Found" : (title || "Velora HD"));
     setMetaTag('property', 'og:description', seoDesc);
-    setMetaTag('property', 'og:image', image || 'https://velorahd.in/graffiti-bg.png');
+    setMetaTag('property', 'og:image', image || 'https://velorahd.in/graffiti-bg.webp');
     setMetaTag('property', 'og:url', canonicalUrl);
     setMetaTag('property', 'og:type', 'website');
 
@@ -82,7 +82,7 @@ export default function SEO({
     setMetaTag('name', 'twitter:card', 'summary_large_image');
     setMetaTag('name', 'twitter:title', is404 ? "Wallpaper Not Found" : (title || "Velora HD"));
     setMetaTag('name', 'twitter:description', seoDesc);
-    setMetaTag('name', 'twitter:image', image || 'https://velorahd.in/graffiti-bg.png');
+    setMetaTag('name', 'twitter:image', image || 'https://velorahd.in/graffiti-bg.webp');
 
     // 6. Canonical Link Tag
     let canonicalLink = document.querySelector('link[rel="canonical"]');

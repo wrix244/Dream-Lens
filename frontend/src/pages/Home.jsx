@@ -12,7 +12,7 @@ const categories = [
   { name: 'Nature', photo: '1501785888041-af3ef285b470', gradient: 'from-emerald-500 to-lime-400' },
   { name: 'Space', photo: '1451187580459-43490279c0fa', gradient: 'from-violet-500 to-fuchsia-400' },
   { name: 'Cyberpunk', photo: '1515621061946-eff1c2a352bd', gradient: 'from-pink-500 to-rose-400' },
-  { name: 'Anime', photo: 'local:/wallpapers/anime/category-thumb.png', gradient: 'from-orange-500 to-yellow-400' },
+  { name: 'Anime', photo: 'local:/wallpapers/anime/category-thumb.webp', gradient: 'from-orange-500 to-yellow-400' },
   { name: 'Cars', photo: '1525609004556-c46c7d6cf0a3', gradient: 'from-red-500 to-orange-400' },
   { name: 'Gaming', photo: '1538481199705-c710c4e965fc', gradient: 'from-fuchsia-500 to-purple-400' },
   { name: 'Minimal', photo: '1507525428034-b723cf961d3e', gradient: 'from-zinc-500 to-zinc-300' },
@@ -65,7 +65,7 @@ export default function Home() {
         title="Premium 4K & Live Wallpapers Marketplace"
         description="Velora HD — Premium wallpaper marketplace. Discover loop-ready live video motion wallpapers, high resolution 4K desktop themes, and mobile backgrounds. Transform every screen into art."
         keywords={["wallpapers", "4k wallpapers", "live wallpapers", "desktop setups", "mobile wallpapers", "velora hd"]}
-        image="https://velorahd.in/graffiti-bg.png"
+        image="https://velorahd.in/graffiti-bg.webp"
       />
       
       {/* 1. Hero Section */}
@@ -73,8 +73,10 @@ export default function Home() {
         {/* Theme-aware hero background */}
         <div className="absolute inset-0 z-0">
           <img
-            src={theme === 'space' ? '/space-hero.png' : '/graffiti-hero.png'}
+            src={theme === 'space' ? '/space-hero.webp' : '/graffiti-hero.webp'}
             alt=""
+            fetchpriority="high"
+            loading="eager"
             className="w-full h-full object-cover transition-opacity duration-700"
           />
           <div className={`absolute inset-0 ${theme === 'space' ? 'bg-[#0B0F19]/50' : 'bg-[#121212]/60'}`} />
