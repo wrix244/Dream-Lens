@@ -66,7 +66,10 @@ export default function WallpaperCard({ wallpaper, purchased = false }) {
   const src1200 = optimiseUrl(wallpaper.previewImage, { width: 1200 });
 
   return (
-    <div className="group relative rounded-2xl overflow-hidden glass-card aspect-[4/5] flex flex-col justify-end">
+    <div
+      className="group relative rounded-2xl overflow-hidden glass-card aspect-[4/5] flex flex-col justify-end"
+      onContextMenu={(e) => e.preventDefault()}
+    >
       {/* Background Media Container */}
       <Link to={`/wallpaper/${wallpaper.slug}`} className="absolute inset-0 z-0">
         {wallpaper.type === 'live' ? (
@@ -74,6 +77,7 @@ export default function WallpaperCard({ wallpaper, purchased = false }) {
             src={wallpaper.downloadFile}
             poster={optimiseUrl(wallpaper.previewImage, { width: 800 })}
             hoverToPlay={true}
+            draggable="false"
             className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500 pointer-events-none select-none"
           />
         ) : (
@@ -85,6 +89,7 @@ export default function WallpaperCard({ wallpaper, purchased = false }) {
             loading="lazy"
             width={400}
             height={500}
+            draggable="false"
             className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500 pointer-events-none select-none"
           />
         )}
