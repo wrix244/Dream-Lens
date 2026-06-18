@@ -13,6 +13,34 @@ export default function Contact() {
     message: ''
   });
   const [submitting, setSubmitting] = useState(false);
+  const [openFaq, setOpenFaq] = useState(null);
+
+  const faqs = [
+    {
+      q: "What types of wallpapers are available on VeloraHD?",
+      a: "We offer both static 4K/8K wallpapers (ideal for high-resolution PC and mobile screens) and looping live motion wallpapers (MP4/WebM files designed for animated desktop and lock screen setups)."
+    },
+    {
+      q: "How do I apply a live wallpaper to my desktop or phone?",
+      a: "For Windows PCs, you can use popular utilities like Lively Wallpaper or Wallpaper Engine. For mobile devices, native Android supports video lock screens directly, while iOS users can set live photos (depending on iOS version compatibility)."
+    },
+    {
+      q: "Are downloads safe and secure?",
+      a: "Absolutely. Security is our top priority. Every single wallpaper file uploaded to VeloraHD undergoes automated security scanning for malware. We guarantee all downloads are 100% secure and sandbox-friendly."
+    },
+    {
+      q: "What is your refund policy for premium downloads?",
+      a: "Since digital downloads are active instantly upon purchase, we typically do not offer refunds once a file is downloaded. However, if you experience a technical error or corrupt file, contact support@velorahd.in and we will gladly issue a replacement or refund."
+    },
+    {
+      q: "Can I use VeloraHD wallpapers for commercial projects?",
+      a: "Our standard downloads are licensed for personal use only (e.g. desktop/mobile backgrounds, home screen setup showcases). For commercial licensing or distribution inquiries, please email business@velorahd.in."
+    }
+  ];
+
+  const toggleFaq = (index) => {
+    setOpenFaq(openFaq === index ? null : index);
+  };
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -285,6 +313,37 @@ export default function Contact() {
             <span className="text-[10px] text-gray-500 mt-2 block">
               Thank you for being part of the VeloraHD community.
             </span>
+          </div>
+        </div>
+
+        {/* FAQ Accordion Section */}
+        <div className="space-y-6 pt-8 border-t border-white/5">
+          <div className="text-center">
+            <h2 className="font-display font-bold text-2xl text-white">Frequently Asked Questions</h2>
+            <p className="text-xs text-gray-400 mt-1">Quick answers to common questions about downloads, pricing, and setups.</p>
+          </div>
+
+          <div className="space-y-3">
+            {faqs.map((faq, idx) => {
+              const isOpen = openFaq === idx;
+              return (
+                <div key={idx} className="glass-panel rounded-2xl border border-white/5 overflow-hidden transition-all duration-300">
+                  <button
+                    type="button"
+                    onClick={() => toggleFaq(idx)}
+                    className="w-full px-5 py-4 text-left font-display font-bold text-xs md:text-sm text-white flex justify-between items-center hover:bg-white/2 transition cursor-pointer"
+                  >
+                    <span>{faq.q}</span>
+                    <span className="text-primary text-lg font-bold">{isOpen ? '−' : '+'}</span>
+                  </button>
+                  {isOpen && (
+                    <div className="px-5 pb-4 text-xs text-gray-400 leading-relaxed border-t border-white/2 pt-3">
+                      {faq.a}
+                    </div>
+                  )}
+                </div>
+              );
+            })}
           </div>
         </div>
       </div>

@@ -28,6 +28,7 @@ const AdminDashboard = lazy(() => import('./pages/AdminDashboard'));
 const LiveDashboard = lazy(() => import('./pages/LiveDashboard'));
 const Privacy = lazy(() => import('./pages/Privacy'));
 const Terms = lazy(() => import('./pages/Terms'));
+const About = lazy(() => import('./pages/About'));
 const Refunds = lazy(() => import('./pages/Refunds'));
 const AiPolicy = lazy(() => import('./pages/AiPolicy'));
 const Copyright = lazy(() => import('./pages/Copyright'));
@@ -230,6 +231,7 @@ export default function App() {
               <Route path="/profile" element={<Profile />} />
               <Route path="/admin" element={<AdminDashboard />} />
               <Route path="/dashboard" element={<LiveDashboard />} />
+               <Route path="/about" element={<About />} />
               <Route path="/privacy" element={<Privacy />} />
               <Route path="/terms" element={<Terms />} />
               <Route path="/refunds" element={<Refunds />} />

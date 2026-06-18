@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
 import { LayoutDashboard, Plus, Edit, Trash2, Users, Download, Image, DollarSign, Loader2, X, Sparkles, AlertTriangle, Activity, RotateCw } from 'lucide-react';
+import { useLenis } from 'lenis/react';
 import {
   useAdminAnalytics,
   useAdminUsers,
@@ -459,9 +460,19 @@ export default function AdminDashboard() {
     }
   }, [location.state]);
 
+  const lenis = useLenis();
+
   // Disable body scroll when modal is open
   useEffect(() => {
-    if (modalOpen) {
+    const isAnyModalOpen = modalOpen || confirmOpen;
+    if (lenis) {
+      if (isAnyModalOpen) {
+        lenis.stop();
+      } else {
+        lenis.start();
+      }
+    }
+    if (isAnyModalOpen) {
       document.documentElement.classList.add('lenis-stopped');
       document.body.style.overflow = 'hidden';
     } else {
@@ -469,10 +480,11 @@ export default function AdminDashboard() {
       document.body.style.overflow = '';
     }
     return () => {
+      if (lenis) lenis.start();
       document.documentElement.classList.remove('lenis-stopped');
       document.body.style.overflow = '';
     };
-  }, [modalOpen]);
+  }, [modalOpen, confirmOpen, lenis]);
 
   const handleToggleBan = (id, currentBannedStatus) => {
     const action = currentBannedStatus ? 'unban' : 'ban';

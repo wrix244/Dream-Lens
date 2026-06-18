@@ -1,7 +1,8 @@
 import React, { useEffect, useState } from 'react';
 import { useParams, Link, useNavigate } from 'react-router-dom';
-import { Heart, Bookmark, Download, Lock, Check, Calendar, ArrowLeft, Image, Share2, Info, Monitor, Smartphone, X, Edit, Trash2, Play, Globe } from 'lucide-react';
+import { Heart, Bookmark, Download, Lock, Check, Calendar, ArrowLeft, Image, Share2, Info, Monitor, Smartphone, X, Edit, Trash2, Play, Globe, Link2 } from 'lucide-react';
 import { registerPlugin, Capacitor } from '@capacitor/core';
+import { useLenis } from 'lenis/react';
 import SEO from '../components/common/SEO';
 import { optimiseUrl } from '../utils/cloudinary';
 import { useWallpaperBySlug, useRelatedWallpapers } from '../hooks/useWallpapers';
@@ -56,12 +57,43 @@ export default function Details() {
   const [confirmMessage, setConfirmMessage] = useState('');
   const [confirmOnApprove, setConfirmOnApprove] = useState(null);
 
+  // Custom Share & Preview Modal States
+  const [shareOpen, setShareOpen] = useState(false);
+  const [previewOpen, setPreviewOpen] = useState(false);
+  const [previewDevice, setPreviewDevice] = useState('desktop');
+
   const requestConfirmation = (title, message, onApprove) => {
     setConfirmTitle(title);
     setConfirmMessage(message);
     setConfirmOnApprove(() => onApprove);
     setConfirmOpen(true);
   };
+
+  const lenis = useLenis();
+
+  // Disable body scroll when any modal is open
+  useEffect(() => {
+    const isAnyModalOpen = showInstructions || confirmOpen || shareOpen || previewOpen || playingAd;
+    if (lenis) {
+      if (isAnyModalOpen) {
+        lenis.stop();
+      } else {
+        lenis.start();
+      }
+    }
+    if (isAnyModalOpen) {
+      document.documentElement.classList.add('lenis-stopped');
+      document.body.style.overflow = 'hidden';
+    } else {
+      document.documentElement.classList.remove('lenis-stopped');
+      document.body.style.overflow = '';
+    }
+    return () => {
+      if (lenis) lenis.start();
+      document.documentElement.classList.remove('lenis-stopped');
+      document.body.style.overflow = '';
+    };
+  }, [showInstructions, confirmOpen, shareOpen, previewOpen, playingAd, lenis]);
 
   useEffect(() => {
     let timer;
@@ -471,28 +503,53 @@ export default function Details() {
               )}
             </div>
 
-            {hasAccess && (
-              <button
-                onClick={handleOpenInstructions}
-                className="w-full py-3.5 px-6 rounded-xl border border-accent/30 hover:border-accent text-accent hover:bg-accent/5 font-bold text-xs tracking-wider uppercase transition-all flex items-center justify-center gap-2 cursor-pointer shadow-lg shadow-accent/5"
-              >
-                <Monitor className="w-4.5 h-4.5" />
-                Set as Wallpaper
-              </button>
-            )}
+            <div className="space-y-2.5">
+              {hasAccess ? (
+                <div className="flex gap-2">
+                  <button
+                    onClick={handleOpenInstructions}
+                    className="flex-grow py-3.5 px-4 rounded-xl border border-accent/30 hover:border-accent text-accent hover:bg-accent/5 font-bold text-xs tracking-wider uppercase transition-all flex items-center justify-center gap-1.5 cursor-pointer shadow-lg shadow-accent/5"
+                  >
+                    <Monitor className="w-4 h-4" />
+                    Set as Wallpaper
+                  </button>
+                  <button
+                    onClick={() => {
+                      setPreviewDevice(wallpaper.deviceType === 'mobile' ? 'mobile' : 'desktop');
+                      setPreviewOpen(true);
+                    }}
+                    className="py-3.5 px-4 rounded-xl border border-white/10 hover:border-white/20 text-gray-300 hover:text-white bg-white/2 hover:bg-white/5 font-bold text-xs tracking-wider uppercase transition-all flex items-center justify-center gap-1.5 cursor-pointer"
+                  >
+                    <Smartphone className="w-4 h-4" />
+                    Preview
+                  </button>
+                </div>
+              ) : (
+                <button
+                  onClick={() => {
+                    setPreviewDevice(wallpaper.deviceType === 'mobile' ? 'mobile' : 'desktop');
+                    setPreviewOpen(true);
+                  }}
+                  className="w-full py-3.5 px-4 rounded-xl border border-accent/25 hover:border-accent/50 text-accent hover:bg-accent/5 font-bold text-xs tracking-wider uppercase transition-all flex items-center justify-center gap-1.5 cursor-pointer shadow-lg"
+                >
+                  <Smartphone className="w-4.5 h-4.5" />
+                  Preview On Device
+                </button>
+              )}
 
-            {/* Share and Info options */}
-            <div className="grid grid-cols-2 gap-2">
-              <button
-                onClick={handleShare}
-                className="py-2.5 px-4 rounded-xl border border-white/5 bg-white/2 text-[10px] font-bold tracking-wider uppercase text-gray-400 hover:text-white hover:bg-white/5 transition flex items-center justify-center gap-1.5"
-              >
-                <Share2 className="w-3.5 h-3.5" />
-                Share Link
-              </button>
-              <div className="py-2.5 px-4 rounded-xl border border-white/5 bg-white/2 text-[10px] font-bold tracking-wider uppercase text-gray-400 flex items-center justify-center gap-1.5">
-                <Image className="w-3.5 h-3.5" />
-                {wallpaper.resolution}
+              {/* Share and Info options */}
+              <div className="grid grid-cols-2 gap-2">
+                <button
+                  onClick={handleShare}
+                  className="py-2.5 px-4 rounded-xl border border-white/5 bg-white/2 text-[10px] font-bold tracking-wider uppercase text-gray-400 hover:text-white hover:bg-white/5 transition flex items-center justify-center gap-1.5 cursor-pointer"
+                >
+                  <Share2 className="w-3.5 h-3.5" />
+                  Share Link
+                </button>
+                <div className="py-2.5 px-4 rounded-xl border border-white/5 bg-white/2 text-[10px] font-bold tracking-wider uppercase text-gray-400 flex items-center justify-center gap-1.5">
+                  <Image className="w-3.5 h-3.5" />
+                  {wallpaper.resolution}
+                </div>
               </div>
             </div>
           </div>
@@ -873,6 +930,191 @@ export default function Details() {
               >
                 Confirm
               </button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* SOCIAL SHARING MODAL */}
+      {shareOpen && (
+        <div className="fixed inset-0 bg-[#121212]/80 backdrop-blur-sm z-50 flex items-center justify-center p-4">
+          <div className="w-full max-w-md bg-[#1A1A1A] border border-white/10 rounded-2xl p-6 space-y-6 relative shadow-2xl">
+            <button
+              type="button"
+              onClick={() => setShareOpen(false)}
+              className="absolute top-4 right-4 text-gray-400 hover:text-white cursor-pointer"
+            >
+              <X className="w-5 h-5" />
+            </button>
+            <div className="space-y-2">
+              <h3 className="font-display font-bold text-lg text-white">Share Artwork</h3>
+              <p className="text-xs text-gray-400">Share this masterpiece wallpaper design with your friends.</p>
+            </div>
+
+            <div className="flex gap-2">
+              <input
+                type="text"
+                readOnly
+                value={window.location.href}
+                className="flex-grow px-3 py-2 text-xs glass-input select-all"
+              />
+              <button
+                type="button"
+                onClick={() => {
+                  navigator.clipboard.writeText(window.location.href);
+                  addToast('Link copied to clipboard!', 'success');
+                }}
+                className="px-4 py-2 bg-primary hover:bg-primary/95 text-white font-bold text-xs rounded-xl shadow-lg transition cursor-pointer flex items-center gap-1"
+              >
+                <Link2 className="w-3.5 h-3.5" />
+                Copy
+              </button>
+            </div>
+
+            <div className="grid grid-cols-2 gap-3 pt-2">
+              <a
+                href={`https://twitter.com/intent/tweet?text=Check%20out%20this%20amazing%20wallpaper%20on%20VeloraHD!&url=${encodeURIComponent(window.location.href)}`}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="py-2.5 px-4 rounded-xl border border-white/5 bg-white/2 text-[10px] font-bold tracking-wider uppercase text-gray-300 hover:text-white hover:bg-slate-900 transition flex items-center justify-center gap-1.5"
+              >
+                <svg className="w-3.5 h-3.5 text-white fill-current" viewBox="0 0 24 24" aria-hidden="true">
+                  <path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z" />
+                </svg>
+                Twitter / X
+              </a>
+              <a
+                href={`https://api.whatsapp.com/send?text=Check%20out%20this%20amazing%20wallpaper%20on%20VeloraHD!%20${encodeURIComponent(window.location.href)}`}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="py-2.5 px-4 rounded-xl border border-white/5 bg-white/2 text-[10px] font-bold tracking-wider uppercase text-gray-300 hover:text-white hover:bg-[#25D366]/10 hover:border-[#25D366]/30 transition flex items-center justify-center gap-1.5"
+              >
+                <svg className="w-3.5 h-3.5 text-[#25D366] fill-current" viewBox="0 0 24 24">
+                  <path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L0 24l6.335-1.662c1.746.953 3.71 1.458 5.705 1.458h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z" />
+                </svg>
+                WhatsApp
+              </a>
+              <a
+                href={`https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(window.location.href)}`}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="py-2.5 px-4 rounded-xl border border-white/5 bg-white/2 text-[10px] font-bold tracking-wider uppercase text-gray-300 hover:text-white hover:bg-[#1877F2]/10 hover:border-[#1877F2]/30 transition flex items-center justify-center gap-1.5"
+              >
+                <svg className="w-3.5 h-3.5 text-[#1877F2] fill-current" viewBox="0 0 24 24">
+                  <path d="M22 12c0-5.52-4.48-10-10-10S2 6.48 2 12c0 4.84 3.44 8.87 8 9.8V15H8v-3h2V9.5C10 7.57 11.57 6 13.5 6H16v3h-2c-.55 0-1 .45-1 1v2h3v3h-3v6.95c4.56-.93 8-4.96 8-9.75z" />
+                </svg>
+                Facebook
+              </a>
+              <a
+                href={`https://pinterest.com/pin/create/button/?url=${encodeURIComponent(window.location.href)}&media=${encodeURIComponent(wallpaper.previewImage)}&description=${encodeURIComponent(wallpaper.title)}`}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="py-2.5 px-4 rounded-xl border border-white/5 bg-white/2 text-[10px] font-bold tracking-wider uppercase text-gray-300 hover:text-white hover:bg-[#BD081C]/10 hover:border-[#BD081C]/30 transition flex items-center justify-center gap-1.5"
+              >
+                <svg className="w-3.5 h-3.5 text-[#BD081C] fill-current" viewBox="0 0 24 24">
+                  <path d="M12.017 0C5.396 0 .029 5.367.029 11.987c0 5.079 3.158 9.417 7.618 11.162-.105-.949-.199-2.403.041-3.439.219-.937 1.406-5.966 1.406-5.966s-.359-.72-.359-1.781c0-1.663.967-2.906 2.17-2.906 1.024 0 1.517.769 1.517 1.693 0 1.029-.655 2.568-.994 3.995-.283 1.194.599 2.169 1.777 2.169 2.133 0 3.772-2.249 3.772-5.495 0-2.873-2.064-4.882-5.012-4.882-3.414 0-5.418 2.561-5.418 5.207 0 1.031.397 2.138.893 2.738.098.119.112.224.083.345l-.333 1.36c-.053.22-.174.267-.402.161-1.499-.698-2.436-2.889-2.436-4.649 0-3.785 2.75-7.262 7.929-7.262 4.162 0 7.397 2.965 7.397 6.93 0 4.136-2.607 7.464-6.227 7.464-1.215 0-2.359-.631-2.75-1.378l-.748 2.853c-.271 1.043-1.002 2.35-1.492 3.146 1.124.347 2.317.535 3.554.535 6.621 0 11.988-5.367 11.988-11.987C24.005 5.367 18.639 0 12.017 0z" />
+                </svg>
+                Pinterest
+              </a>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* DEVICE PREVIEW MODAL */}
+      {previewOpen && (
+        <div className="fixed inset-0 bg-[#121212]/85 backdrop-blur-md z-50 flex items-center justify-center p-4">
+          <div className="w-full max-w-3xl bg-[#1A1A1A] border border-white/10 rounded-3xl p-6 space-y-6 relative shadow-2xl flex flex-col items-center">
+            <button
+              type="button"
+              onClick={() => setPreviewOpen(false)}
+              className="absolute top-4 right-4 text-gray-400 hover:text-white cursor-pointer"
+            >
+              <X className="w-5 h-5" />
+            </button>
+            <div className="text-center space-y-1">
+              <h3 className="font-display font-bold text-lg text-white">Device Live Preview</h3>
+              <p className="text-xs text-gray-400">See how this artwork fits on your desktop and phone screens.</p>
+            </div>
+
+            {/* Toggle Preview device */}
+            <div className="inline-flex p-1 rounded-full bg-white/5 border border-white/10 backdrop-blur-sm">
+              <button
+                type="button"
+                onClick={() => setPreviewDevice('desktop')}
+                className={`px-4 py-1.5 rounded-full text-[10px] font-bold tracking-wider uppercase transition-all flex items-center gap-1.5 cursor-pointer ${
+                  previewDevice === 'desktop'
+                    ? 'bg-primary text-white shadow-lg shadow-primary/20'
+                    : 'text-gray-400 hover:text-white'
+                }`}
+              >
+                <Monitor className="w-3.5 h-3.5" /> Desktop
+              </button>
+              <button
+                type="button"
+                onClick={() => setPreviewDevice('mobile')}
+                className={`px-4 py-1.5 rounded-full text-[10px] font-bold tracking-wider uppercase transition-all flex items-center gap-1.5 cursor-pointer ${
+                  previewDevice === 'mobile'
+                    ? 'bg-primary text-white shadow-lg shadow-primary/20'
+                    : 'text-gray-400 hover:text-white'
+                }`}
+              >
+                <Smartphone className="w-3.5 h-3.5" /> Mobile
+              </button>
+            </div>
+
+            {/* Preview Frame Area */}
+            <div className="w-full min-h-[350px] flex items-center justify-center py-4 bg-slate-950/20 rounded-2xl border border-white/5 relative overflow-hidden">
+              {previewDevice === 'desktop' ? (
+                /* Desktop Monitor Frame */
+                <div className="flex flex-col items-center">
+                  <div className="w-[380px] md:w-[480px] aspect-[16/10] border-[6px] border-neutral-800 bg-neutral-950 rounded-t-2xl shadow-2xl relative overflow-hidden">
+                    <img
+                      src={wallpaper.previewImage}
+                      alt={wallpaper.title}
+                      className="absolute inset-0 w-full h-full object-cover"
+                    />
+                    <div className="absolute inset-x-0 bottom-1 flex justify-center opacity-60">
+                      <div className="px-4 py-1 rounded bg-black/60 backdrop-blur-md flex gap-2.5">
+                        <div className="w-2.5 h-2.5 rounded bg-white/20" />
+                        <div className="w-2.5 h-2.5 rounded bg-white/20" />
+                        <div className="w-2.5 h-2.5 rounded bg-white/20" />
+                      </div>
+                    </div>
+                  </div>
+                  {/* Laptop Base Stand */}
+                  <div className="w-[100px] h-[24px] bg-neutral-800 border-t border-neutral-700 shadow-md animate-in slide-in-from-bottom" />
+                  <div className="w-[180px] h-[6px] bg-neutral-700 rounded-full shadow-lg" />
+                </div>
+              ) : (
+                /* Mobile Phone Frame */
+                <div className="w-[200px] h-[390px] rounded-[36px] border-[6px] border-neutral-800 bg-neutral-950 shadow-2xl relative overflow-hidden flex flex-col justify-between p-4 animate-in zoom-in-95">
+                  {/* Dynamic Island Notcher */}
+                  <div className="absolute top-2 left-1/2 -translate-x-1/2 w-16 h-3 rounded-full bg-black z-20" />
+                  
+                  {/* Wallpaper */}
+                  <img
+                    src={wallpaper.previewImage}
+                    alt={wallpaper.title}
+                    className="absolute inset-0 w-full h-full object-cover"
+                  />
+                  
+                  {/* Lock Screen UI widgets */}
+                  <div className="relative z-10 text-center text-white mt-4 space-y-0.5 pointer-events-none drop-shadow-md">
+                    <div className="text-[9px] font-bold uppercase tracking-wider opacity-85">
+                      {new Date().toLocaleDateString(undefined, { weekday: 'long', month: 'short', day: 'numeric' })}
+                    </div>
+                    <div className="text-4xl font-black tracking-tight leading-none">09:41</div>
+                  </div>
+
+                  {/* Bottom Home indicator */}
+                  <div className="relative z-10 mx-auto w-24 h-1 bg-white/80 rounded-full mb-1 drop-shadow" />
+                </div>
+              )}
+            </div>
+
+            <div className="text-[10px] text-gray-500 max-w-sm text-center leading-relaxed">
+              Resolution shown: {wallpaper.resolution} ({wallpaper.deviceType} optimized). Drag-and-zoom previews represent simulated setups.
             </div>
           </div>
         </div>

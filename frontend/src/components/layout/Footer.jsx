@@ -68,6 +68,7 @@ export default function Footer() {
               Formats
             </h4>
             <ul className="space-y-2 text-xs text-gray-400">
+              <li><Link to="/about" className="hover:text-white transition-colors font-semibold">About Our Story</Link></li>
               <li><Link to="/explore?deviceType=mobile" className="hover:text-white transition-colors">Mobile Wallpapers</Link></li>
               <li><Link to="/explore?deviceType=desktop" className="hover:text-white transition-colors">PC Wallpapers</Link></li>
               <li><Link to="/explore?type=live" className="hover:text-white transition-colors">Live Wallpapers</Link></li>
@@ -112,6 +113,7 @@ export default function Footer() {
             © {new Date().getFullYear()} Velora HD. All rights reserved.
           </p>
           <div className="flex flex-wrap justify-center gap-4 text-[10px] text-gray-500">
+            <Link to="/about" className="hover:text-white transition-colors font-semibold">About Us</Link>
             <Link to="/privacy" className="hover:text-white transition-colors">Privacy Policy</Link>
             <Link to="/terms" className="hover:text-white transition-colors">Terms of Service</Link>
             <Link to="/refunds" className="hover:text-white transition-colors">Refund Policy</Link>

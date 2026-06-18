@@ -1,9 +1,10 @@
 import React, { useState } from 'react';
 import { Link, NavLink, useNavigate, useLocation } from 'react-router-dom';
-import { Menu, X, User, LogOut, LayoutDashboard, Heart, History, Compass, Sparkles, Monitor, Phone, Film, Activity, Download } from 'lucide-react';
+import { Menu, X, User, LogOut, LayoutDashboard, Heart, History, Compass, Sparkles, Monitor, Phone, Film, Activity, Download, Search, Sun, Moon } from 'lucide-react';
 import useAuthStore from '../../store/authStore';
 import useUIStore from '../../store/uiStore';
 import usePWAStore from '../../store/pwaStore';
+import useThemeStore from '../../store/themeStore';
 
 export default function Navbar() {
   const navigate = useNavigate();
@@ -11,9 +12,11 @@ export default function Navbar() {
   const { user, isAuthenticated, logout } = useAuthStore();
   const addToast = useUIStore((state) => state.addToast);
   const { isInstalled, installApp, deferredPrompt } = usePWAStore();
+  const { theme, setTheme } = useThemeStore();
   
   const [isOpen, setIsOpen] = useState(false);
   const [dropdownOpen, setDropdownOpen] = useState(false);
+  const [searchQuery, setSearchQuery] = useState('');
 
   const handlePWAInstall = async () => {
     if (deferredPrompt) {
@@ -31,6 +34,15 @@ export default function Navbar() {
     setIsOpen(false);
   };
 
+  const handleSearchSubmit = (e) => {
+    e.preventDefault();
+    if (searchQuery.trim()) {
+      navigate(`/explore?search=${encodeURIComponent(searchQuery.trim())}`);
+      setSearchQuery('');
+      setIsOpen(false);
+    }
+  };
+
   const navLinks = [
     { name: 'Home', path: '/' },
     { name: 'Explore', path: '/explore' },
@@ -44,10 +56,10 @@ export default function Navbar() {
 
   return (
     <nav className="fixed top-0 inset-x-0 h-16 glass-panel border-b border-white/5 z-50 transition-all">
-      <div className="max-w-7xl mx-auto h-full px-4 sm:px-6 lg:px-8 flex justify-between items-center">
+      <div className="max-w-7xl mx-auto h-full px-4 sm:px-6 lg:px-8 flex justify-between items-center gap-4">
         
         {/* Branding Logo */}
-        <Link to="/" className="flex items-center gap-2 group">
+        <Link to="/" className="flex items-center gap-2 group flex-shrink-0">
           <div className="w-8 h-8 rounded-lg bg-gradient-to-tr from-primary to-accent flex items-center justify-center shadow-lg shadow-primary/20 group-hover:rotate-6 transition-transform">
             <span className="font-display font-black text-white text-base">VH</span>
           </div>
@@ -57,27 +69,29 @@ export default function Navbar() {
         </Link>
 
         {/* Desktop Links */}
-        <div className="hidden md:flex items-center gap-1">
+        <div className="hidden md:flex items-center gap-1 overflow-x-auto py-1 scrollbar-none">
           {navLinks.map((link) => {
             if (link.onClick) {
               return (
                 <button
                   key={link.name}
                   onClick={link.onClick}
-                  className="flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-semibold tracking-wide transition-all text-accent hover:text-accent-active border border-accent/20 bg-accent/5 hover:bg-accent/10 cursor-pointer"
+                  className="flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-semibold tracking-wide transition-all text-accent hover:text-accent-active border border-accent/20 bg-accent/5 hover:bg-accent/10 cursor-pointer flex-shrink-0"
                 >
                   {link.icon}
                   {link.name}
                 </button>
               );
             }
+            const hasQuery = link.path.includes('?');
+            const linkQuery = hasQuery ? link.path.split('?')[1] : '';
             return (
               <NavLink
                 key={link.name}
                 to={link.path}
                 className={({ isActive }) =>
-                  `flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-semibold tracking-wide transition-all ${
-                    (isActive && location.search === link.path.split('?')[1]) || (isActive && !link.path.includes('?'))
+                  `flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-semibold tracking-wide transition-all flex-shrink-0 ${
+                    (isActive && location.search.substring(1) === linkQuery) || (isActive && !hasQuery && location.search === '')
                       ? 'bg-primary/10 text-primary border border-primary/20'
                       : 'text-gray-300 hover:text-white border border-transparent hover:bg-white/5'
                   }`
@@ -90,14 +104,35 @@ export default function Navbar() {
           })}
         </div>
 
+        {/* Desktop Search */}
+        <form onSubmit={handleSearchSubmit} className="hidden lg:flex items-center relative max-w-xs w-full flex-grow">
+          <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400" />
+          <input
+            type="text"
+            placeholder="Search wallpapers..."
+            value={searchQuery}
+            onChange={(e) => setSearchQuery(e.target.value)}
+            className="w-full pl-9 pr-3 py-1.5 text-xs glass-input"
+          />
+        </form>
+
         {/* Right side CTA / Actions */}
-        <div className="hidden md:flex items-center gap-4">
+        <div className="hidden md:flex items-center gap-3 flex-shrink-0">
+          {/* Light/Dark Toggle */}
+          <button
+            onClick={() => setTheme(theme === 'light' ? 'dark' : 'light')}
+            className="p-2 rounded-full border border-white/5 bg-white/2 hover:bg-white/5 text-gray-300 hover:text-white transition cursor-pointer"
+            aria-label={`Switch to ${theme === 'light' ? 'dark' : 'light'} mode`}
+          >
+            {theme === 'light' ? <Moon className="w-4.5 h-4.5" /> : <Sun className="w-4.5 h-4.5" />}
+          </button>
+
           {isAuthenticated ? (
             <div className="relative">
               {/* Profile dropdown trigger */}
               <button
                 onClick={() => setDropdownOpen(!dropdownOpen)}
-                className="flex items-center gap-2 p-1 pr-3 rounded-full bg-[#1A1A1A] border border-white/5 hover:border-white/15 transition-all text-left"
+                className="flex items-center gap-2 p-1 pr-3 rounded-full bg-[#1A1A1A] border border-white/5 hover:border-white/15 transition-all text-left cursor-pointer"
               >
                 <div className="w-8 h-8 rounded-full bg-gradient-to-tr from-primary via-secondary to-accent flex items-center justify-center font-display font-bold text-[#121212] uppercase text-xs">
                   {user?.name?.slice(0, 2)}
@@ -182,12 +217,19 @@ export default function Navbar() {
           )}
         </div>
 
-        {/* Mobile menu trigger */}
-        <div className="flex md:hidden items-center">
+        {/* Mobile controls & Menu trigger */}
+        <div className="flex md:hidden items-center gap-2 flex-shrink-0">
+          <button
+            onClick={() => setTheme(theme === 'light' ? 'dark' : 'light')}
+            className="p-1.5 rounded-full text-gray-400 hover:text-white transition-colors cursor-pointer"
+            aria-label={`Switch to ${theme === 'light' ? 'dark' : 'light'} mode`}
+          >
+            {theme === 'light' ? <Moon className="w-5 h-5" /> : <Sun className="w-5 h-5" />}
+          </button>
           <button
             onClick={() => setIsOpen(!isOpen)}
             aria-label={isOpen ? 'Close navigation menu' : 'Open navigation menu'}
-            className="p-1 text-gray-400 hover:text-white transition-colors"
+            className="p-1 text-gray-400 hover:text-white transition-colors cursor-pointer"
           >
             {isOpen ? <X className="w-6 h-6" /> : <Menu className="w-6 h-6" />}
           </button>
@@ -200,6 +242,19 @@ export default function Navbar() {
           <div className="fixed inset-0 top-16 bg-[#121212]/60 backdrop-blur-sm z-40" onClick={() => setIsOpen(false)} />
           <div className="fixed top-16 right-0 bottom-0 w-64 glass-panel border-l border-white/10 z-50 p-4 flex flex-col justify-between">
             <div className="space-y-4">
+              
+              {/* Mobile Search input */}
+              <form onSubmit={handleSearchSubmit} className="relative w-full">
+                <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400" />
+                <input
+                  type="text"
+                  placeholder="Search wallpapers..."
+                  value={searchQuery}
+                  onChange={(e) => setSearchQuery(e.target.value)}
+                  className="w-full pl-9 pr-3 py-2 text-xs glass-input"
+                />
+              </form>
+
               {/* Nav links */}
               <div className="flex flex-col gap-1">
                 {navLinks.map((link) => {
@@ -218,6 +273,8 @@ export default function Navbar() {
                       </button>
                     );
                   }
+                  const hasQuery = link.path.includes('?');
+                  const linkQuery = hasQuery ? link.path.split('?')[1] : '';
                   return (
                     <NavLink
                       key={link.name}
@@ -225,7 +282,7 @@ export default function Navbar() {
                       onClick={() => setIsOpen(false)}
                       className={({ isActive }) =>
                         `flex items-center gap-2 px-3 py-2.5 rounded-xl text-sm font-semibold transition-all ${
-                          (isActive && location.search === link.path.split('?')[1]) || (isActive && !link.path.includes('?'))
+                          (isActive && location.search.substring(1) === linkQuery) || (isActive && !hasQuery && location.search === '')
                             ? 'bg-primary/10 text-primary'
                             : 'text-gray-300 hover:text-white hover:bg-white/5'
                         }`

@@ -72,65 +72,33 @@ export default function Home() {
         {/* Theme-aware hero background */}
         <div className="absolute inset-0 z-0">
           <img
-            src={theme === 'space' ? '/space-hero.webp' : '/graffiti-hero.webp'}
-            srcSet={
-              theme === 'space'
-                ? '/space-hero-mobile.webp 640w, /space-hero.webp 1024w'
-                : '/graffiti-hero-mobile.webp 640w, /graffiti-hero.webp 1024w'
-            }
+            src="/space-hero.webp"
+            srcSet="/space-hero-mobile.webp 640w, /space-hero.webp 1024w"
             sizes="(max-width: 640px) 640px, 1024px"
             alt=""
             fetchpriority="high"
             loading="eager"
-            className="w-full h-full object-cover transition-opacity duration-700"
+            className={`w-full h-full object-cover transition-opacity duration-700 ${theme === 'light' ? 'opacity-5' : 'opacity-35'}`}
           />
-          <div className={`absolute inset-0 ${theme === 'space' ? 'bg-[#0B0F19]/50' : 'bg-[#121212]/60'}`} />
-          <div className={`absolute inset-0 bg-gradient-to-t ${theme === 'space' ? 'from-[#0B0F19] via-[#0B0F19]/40' : 'from-[#121212] via-[#121212]/40'} to-transparent`} />
-          <div className={`absolute inset-0 bg-gradient-to-b ${theme === 'space' ? 'from-[#0B0F19]' : 'from-[#121212]'} via-transparent to-transparent h-32`} />
+          <div className="absolute inset-0 bg-[#0B0F19]/40" />
+          <div className="absolute inset-0 bg-gradient-to-t from-[#0B0F19] via-[#0B0F19]/20 to-transparent" />
+          <div className="absolute inset-0 bg-gradient-to-b from-[#0B0F19] via-transparent to-transparent h-32" />
         </div>
 
         {/* Neon glowing radial backgrounds */}
-        <div className="absolute top-1/4 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[500px] h-[500px] rounded-full bg-primary/15 blur-[120px] pointer-events-none z-[1]" />
-        <div className="absolute bottom-1/4 left-1/3 w-[400px] h-[400px] rounded-full bg-accent/10 blur-[100px] pointer-events-none z-[1]" />
-        <div className="absolute top-1/3 right-1/4 w-[300px] h-[300px] rounded-full bg-secondary/10 blur-[80px] pointer-events-none z-[1]" />
+        <div className="absolute top-1/4 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[500px] h-[500px] rounded-full bg-primary/10 blur-[120px] pointer-events-none z-[1]" />
+        <div className="absolute bottom-1/4 left-1/3 w-[400px] h-[400px] rounded-full bg-accent/5 blur-[100px] pointer-events-none z-[1]" />
 
         <div className="max-w-4xl mx-auto text-center space-y-8 relative z-10">
-          <div className="animate-slide-down-hero">
-            <div className="inline-flex items-center gap-1 p-1 rounded-full bg-white/5 border border-white/10 backdrop-blur-sm">
-              <button
-                onClick={() => setTheme('graffiti')}
-                className={`px-4 py-1.5 rounded-full text-xs font-bold tracking-wider uppercase transition-all flex items-center gap-1.5 ${
-                  theme === 'graffiti'
-                    ? 'bg-primary text-white shadow-lg shadow-primary/20'
-                    : 'text-gray-400 hover:text-white'
-                }`}
-              >
-                🎨 Graffiti
-              </button>
-              <button
-                onClick={() => setTheme('space')}
-                className={`px-4 py-1.5 rounded-full text-xs font-bold tracking-wider uppercase transition-all flex items-center gap-1.5 ${
-                  theme === 'space'
-                    ? 'bg-primary text-white shadow-lg shadow-primary/20'
-                    : 'text-gray-400 hover:text-white'
-                }`}
-              >
-                🚀 Space
-              </button>
-            </div>
-          </div>
-
           <h1 className="font-display font-black text-5xl md:text-7xl tracking-tight text-white leading-[1.1] animate-slide-up-hero-title">
-            {theme === 'graffiti' ? 'Splash Art On' : 'Explore The'} <br />
+            Transform Your Screen <br />
             <span className="text-transparent bg-clip-text bg-gradient-to-r from-primary via-secondary to-accent">
-              {theme === 'graffiti' ? 'Every Wall' : 'Cosmos Beyond'}
+              Into Masterpiece Art
             </span>
           </h1>
 
           <p className="text-base md:text-lg text-gray-400 max-w-xl mx-auto leading-relaxed animate-fade-in-hero-para">
-            {theme === 'graffiti'
-              ? 'Discover a curated collection of ultra-high-definition PC and mobile wallpapers. Experience smooth animations, live motion loops, and premium design.'
-              : 'Journey through stunning cosmic wallpapers — nebulae, galaxies, star fields, and deep space vistas. Transform your screen into a portal to the universe.'}
+            Discover a curated collection of ultra-high-definition 4K PC setups, mobile vertical aesthetics, and looping 3D live wallpapers.
           </p>
 
           <div className="flex flex-wrap justify-center gap-4 pt-4 animate-slide-up-hero-buttons">
@@ -150,6 +118,82 @@ export default function Home() {
           </div>
         </div>
       </section>
+
+      {/* Wallpaper of the Day Spotlight Section */}
+      {trending && trending.length > 0 && (
+        <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 relative z-10">
+          <div className="relative rounded-3xl overflow-hidden glass-panel p-6 md:p-8 flex flex-col lg:flex-row items-center gap-8 border border-white/5 shadow-2xl">
+            {/* Spotlight badge */}
+            <div className="absolute top-4 left-4 z-10">
+              <span className="px-3 py-1 rounded-full bg-primary/25 text-white border border-primary/20 text-[9px] font-bold tracking-widest uppercase inline-flex items-center gap-1.5 shadow-md">
+                <Sparkles className="w-3.5 h-3.5 text-primary animate-pulse" /> Daily Spotlight
+              </span>
+            </div>
+
+            {(() => {
+              const day = new Date().getDate();
+              // Pick deterministically from trending list
+              const dailyWp = trending[day % trending.length];
+              if (!dailyWp) return null;
+
+              return (
+                <>
+                  {/* Left side: Preview screen with modern zoom effect */}
+                  <div className="w-full lg:w-1/2 aspect-video rounded-2xl overflow-hidden bg-slate-950/40 border border-white/5 relative group flex-shrink-0">
+                    <img
+                      src={dailyWp.previewImage}
+                      alt={dailyWp.title}
+                      loading="lazy"
+                      className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700"
+                    />
+                    <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent" />
+                    {dailyWp.type === 'live' && (
+                      <span className="absolute bottom-3 right-3 px-2 py-0.5 rounded bg-black/60 backdrop-blur-sm text-[9px] font-bold tracking-widest uppercase text-white border border-white/10">
+                        Live Motion
+                      </span>
+                    )}
+                  </div>
+
+                  {/* Right side: Info and CTA */}
+                  <div className="w-full lg:w-1/2 space-y-4 text-left pt-6 lg:pt-0">
+                    <div>
+                      <span className="text-[10px] font-bold text-accent tracking-widest uppercase">
+                        Spotlight Feature
+                      </span>
+                      <h3 className="font-display font-bold text-2xl md:text-3xl text-white mt-1">
+                        {dailyWp.title}
+                      </h3>
+                      <p className="text-xs text-gray-400 mt-2 leading-relaxed max-w-lg">
+                        {dailyWp.description || "Transform your device setup with today's community spotlight. Featuring stunning detail, curated gradients, and optimized layouts."}
+                      </p>
+                    </div>
+
+                    <div className="flex flex-wrap gap-1.5">
+                      {dailyWp.tags?.slice(0, 4).map(tag => (
+                        <span key={tag} className="px-2 py-0.5 bg-white/5 border border-white/5 rounded text-[9px] font-medium text-gray-400 capitalize">
+                          #{tag}
+                        </span>
+                      ))}
+                    </div>
+
+                    <div className="pt-2 flex items-center gap-6">
+                      <Link
+                        to={`/wallpaper/${dailyWp.slug}`}
+                        className="px-6 py-2.5 rounded-xl bg-primary hover:bg-primary/95 text-white font-bold text-xs tracking-wider uppercase shadow-xl hover:shadow-primary/20 transition-all cursor-pointer"
+                      >
+                        View Spotlight
+                      </Link>
+                      <div className="text-[10px] text-gray-500 font-medium">
+                        Category: <strong className="text-gray-300 capitalize">{dailyWp.category}</strong>
+                      </div>
+                    </div>
+                  </div>
+                </>
+              );
+            })()}
+          </div>
+        </section>
+      )}
 
       {/* 2. Featured/Trending Wallpapers Carousel */}
       <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
