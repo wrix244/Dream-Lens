@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { useParams, Link, useNavigate } from 'react-router-dom';
-import { Heart, Bookmark, Download, Lock, Check, Calendar, ArrowLeft, Image, Share2, Info, Monitor, Smartphone, X, Edit, Trash2, Play, Globe, Link2 } from 'lucide-react';
+import { Heart, Bookmark, Download, Lock, Calendar, ArrowLeft, Image, Share2, Info, Monitor, Smartphone, X, Edit, Trash2, Play, Globe, Link2 } from 'lucide-react';
 import { registerPlugin, Capacitor } from '@capacitor/core';
 import { useLenis } from 'lenis/react';
 import SEO from '../components/common/SEO';
@@ -28,7 +28,7 @@ export default function Details() {
   const addRecentlyViewed = useUIStore((state) => state.addRecentlyViewed);
   const addToast = useUIStore((state) => state.addToast);
 
-  // Queries (Declared at top to avoid Temporal Dead Zone ReferenceError)
+  // Queries
   const { data: wallpaper, isLoading, error } = useWallpaperBySlug(slug);
   const { data: related, isLoading: relatedLoading } = useRelatedWallpapers(wallpaper?._id);
   const { data: purchases } = usePurchaseHistory();
@@ -261,10 +261,10 @@ export default function Details() {
     return (
       <div className="pt-20 pb-16 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 space-y-8 animate-pulse">
         <SEO title="Loading..." />
-        <div className="h-6 w-24 bg-[#1A1A1A] rounded" />
+        <div className="h-6 w-24 bg-surface rounded border border-border" />
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-8">
-          <div className="lg:col-span-8 aspect-video rounded-3xl bg-[#1A1A1A]" />
-          <div className="lg:col-span-4 h-96 rounded-3xl bg-[#1A1A1A]" />
+          <div className="lg:col-span-8 aspect-[16/10] rounded-2xl bg-surface border border-border" />
+          <div className="lg:col-span-4 h-96 rounded-2xl bg-surface border border-border" />
         </div>
       </div>
     );
@@ -276,10 +276,10 @@ export default function Details() {
         <SEO is404={true} />
         <Info className="w-12 h-12 text-rose-500 mx-auto" />
         <h2 className="font-display font-bold text-xl text-white">Wallpaper Not Found</h2>
-        <p className="text-xs text-gray-400">
+        <p className="text-xs text-text-muted">
           The requested wallpaper does not exist or has been removed by the administrator.
         </p>
-        <Link to="/explore" className="px-5 py-2.5 bg-primary text-white text-xs font-semibold rounded-xl inline-block">
+        <Link to="/explore" className="px-5 py-2.5 bg-primary text-white text-xs font-semibold rounded-lg inline-block">
           Return to Explore
         </Link>
       </div>
@@ -318,7 +318,7 @@ export default function Details() {
       <div>
         <button
           onClick={() => navigate(-1)}
-          className="flex items-center gap-1.5 text-xs font-semibold text-gray-400 hover:text-white transition-colors"
+          className="flex items-center gap-1.5 text-xs font-semibold text-text-muted hover:text-white transition-colors"
         >
           <ArrowLeft className="w-4 h-4" />
           Back
@@ -326,9 +326,9 @@ export default function Details() {
       </div>
 
       {/* Main Container */}
-      <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
+      <div className="grid grid-cols-1 lg:grid-cols-12 gap-10 items-start">
         {/* Left: Large Preview Frame */}
-        <div className="lg:col-span-8 rounded-3xl overflow-hidden glass-panel border-white/10 relative shadow-2xl flex items-center justify-center bg-[#121212]">
+        <div className="lg:col-span-8 rounded-2xl overflow-hidden bg-surface border border-border relative flex items-center justify-center min-h-[40vh] max-h-[70vh]">
           {wallpaper.type === 'live' ? (
             <div className="w-full aspect-[16/10] max-h-[70vh]">
               <LivePlayer
@@ -336,7 +336,7 @@ export default function Details() {
                 poster={optimiseUrl(wallpaper.previewImage, { width: 1200 })}
                 autoplay={true}
                 hoverToPlay={false}
-                className="w-full h-full"
+                className="w-full h-full object-contain"
               />
             </div>
           ) : (
@@ -349,17 +349,25 @@ export default function Details() {
 
           {/* Absolute labels */}
           <div className="absolute top-4 left-4 flex gap-2">
-            <span className="px-2.5 py-1 text-[10px] font-bold bg-[#121212]/80 text-white rounded-full tracking-wide backdrop-blur-sm border border-white/5 uppercase">
+            <span className="px-2.5 py-0.5 text-[9px] font-bold bg-surface text-white rounded border border-border tracking-wider uppercase">
               {wallpaper.type}
             </span>
-            <span className="px-2.5 py-1 text-[10px] font-bold bg-[#121212]/80 text-white rounded-full tracking-wide backdrop-blur-sm border border-white/5 uppercase">
+            <span className="px-2.5 py-0.5 text-[9px] font-bold bg-surface text-white rounded border border-border tracking-wider uppercase">
               {wallpaper.deviceType}
+            </span>
+          </div>
+
+          {/* Bottom-left quality badge */}
+          <div className="absolute bottom-4 left-4 flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-black/85 backdrop-blur-md border border-white/10 text-white select-none max-w-[calc(100%-2rem)]">
+            <div className="w-1.5 h-1.5 rounded-full bg-white animate-pulse flex-shrink-0" />
+            <span className="text-[8px] sm:text-[9px] font-bold tracking-wider sm:tracking-widest uppercase text-white/90 truncate">
+              Low-res preview for speed • Full 4K Quality on Download
             </span>
           </div>
         </div>
 
         {/* Right: Info Sidebar Panel */}
-        <div className="lg:col-span-4 p-6 rounded-3xl glass-panel space-y-6">
+        <div className="lg:col-span-4 p-6 rounded-2xl bg-surface border border-border space-y-6">
           <div className="space-y-2">
             <span className="text-[10px] font-bold tracking-widest text-primary uppercase">
               {wallpaper.category}
@@ -367,21 +375,21 @@ export default function Details() {
             <h1 className="font-display font-black text-2xl md:text-3xl text-white leading-tight">
               {wallpaper.title}
             </h1>
-            <p className="text-xs text-gray-400 leading-relaxed pt-2 whitespace-pre-wrap break-words">
+            <p className="text-xs text-text-muted leading-relaxed pt-2 whitespace-pre-wrap break-words">
               {wallpaper.description || 'No description provided for this artwork.'}
             </p>
             {user?.role === 'admin' && (
-              <div className="flex gap-2 pt-4 border-t border-white/5 mt-2">
+              <div className="flex gap-2 pt-4 border-t border-border mt-2">
                 <button
                   onClick={handleEdit}
-                  className="flex-grow py-2.5 px-4 bg-primary/10 hover:bg-primary/25 border border-primary/20 hover:border-primary/40 text-primary text-xs font-bold uppercase tracking-wider rounded-xl flex items-center justify-center gap-1.5 transition-all cursor-pointer"
+                  className="flex-grow py-2 px-4 bg-surface-2 hover:bg-surface border border-border text-primary text-xs font-bold uppercase tracking-wider rounded-lg flex items-center justify-center gap-1.5 transition-all cursor-pointer"
                 >
                   <Edit className="w-3.5 h-3.5" />
-                  Edit Wallpaper
+                  Edit
                 </button>
                 <button
                   onClick={handleDelete}
-                  className="py-2.5 px-4 bg-rose-500/10 hover:bg-rose-500/20 border border-rose-500/20 hover:border-rose-500/40 text-rose-400 text-xs font-bold uppercase tracking-wider rounded-xl flex items-center justify-center gap-1.5 transition-all cursor-pointer"
+                  className="py-2 px-4 bg-rose-500/10 hover:bg-rose-500/20 border border-rose-500/20 text-rose-400 text-xs font-bold uppercase tracking-wider rounded-lg flex items-center justify-center gap-1.5 transition-all cursor-pointer"
                 >
                   <Trash2 className="w-3.5 h-3.5" />
                   Delete
@@ -391,13 +399,13 @@ export default function Details() {
           </div>
 
           {/* Asset Stats details */}
-          <div className="grid grid-cols-2 gap-4 py-4 border-y border-white/5 text-center">
+          <div className="grid grid-cols-2 gap-4 py-4 border-y border-border text-center">
             <div>
-              <p className="text-[10px] font-bold tracking-wider text-gray-500 uppercase">Downloads</p>
+              <p className="text-[9px] font-bold tracking-widest text-text-muted uppercase">Downloads</p>
               <p className="font-display font-bold text-lg text-white mt-0.5">{wallpaper.downloads || 0}</p>
             </div>
             <div>
-              <p className="text-[10px] font-bold tracking-wider text-gray-500 uppercase">Likes</p>
+              <p className="text-[9px] font-bold tracking-widest text-text-muted uppercase">Likes</p>
               <p className="font-display font-bold text-lg text-white mt-0.5">{wallpaper.likes || 0}</p>
             </div>
           </div>
@@ -411,7 +419,7 @@ export default function Details() {
                     {/* Buy Button */}
                     <button
                       onClick={handleAction}
-                      className="flex-grow py-3.5 px-6 bg-gradient-to-r from-primary to-secondary text-white rounded-xl font-bold text-xs tracking-wider uppercase transition-all shadow-xl shadow-primary/10 flex items-center justify-center gap-2"
+                      className="flex-grow py-3 px-6 bg-primary hover:bg-primary/95 text-white rounded-lg font-bold text-xs tracking-wider uppercase transition-all shadow flex items-center justify-center gap-2 cursor-pointer"
                     >
                       <Lock className="w-4 h-4" />
                       Unlock for ${wallpaper.price.toFixed(2)}
@@ -422,10 +430,10 @@ export default function Details() {
                       onClick={handleLike}
                       disabled={toggleLikeMutation.isPending}
                       aria-label="Like wallpaper"
-                      className={`p-3.5 rounded-xl border transition-all ${
+                      className={`p-3 rounded-lg border transition-all cursor-pointer ${
                         isLiked
                           ? 'bg-rose-500/80 border-rose-500/20 text-white'
-                          : 'border-white/10 text-gray-300 hover:text-white hover:bg-white/5'
+                          : 'border-border text-text-muted hover:text-white hover:bg-surface-2'
                       }`}
                       title="Like this artwork"
                     >
@@ -437,10 +445,10 @@ export default function Details() {
                       onClick={handleFavorite}
                       disabled={toggleFavMutation.isPending}
                       aria-label="Save wallpaper"
-                      className={`p-3.5 rounded-xl border transition-all ${
+                      className={`p-3 rounded-lg border transition-all cursor-pointer ${
                         isFavorite
                           ? 'bg-amber-500/80 border-amber-500/20 text-white'
-                          : 'border-white/10 text-gray-300 hover:text-white hover:bg-white/5'
+                          : 'border-border text-text-muted hover:text-white hover:bg-surface-2'
                       }`}
                       title="Add to Favorites"
                     >
@@ -451,10 +459,9 @@ export default function Details() {
                   {/* Watch Ad to Unlock */}
                   <button
                     onClick={handleWatchAd}
-                    disabled={adUnlockMutation.isPending}
-                    className="w-full py-3.5 px-6 bg-white/[0.04] hover:bg-white/10 border border-white/10 hover:border-white/20 text-white rounded-xl font-bold text-xs tracking-wider uppercase transition-all flex items-center justify-center gap-2 cursor-pointer shadow-lg"
+                    className="w-full py-3 px-6 bg-surface-2 hover:bg-surface border border-border text-white rounded-lg font-bold text-xs tracking-wider uppercase transition-all flex items-center justify-center gap-2 cursor-pointer"
                   >
-                    <Play className="w-4 h-4 text-accent animate-pulse fill-accent/20" />
+                    <Play className="w-4 h-4 text-primary fill-primary/20" />
                     Watch Ad to Unlock Free
                   </button>
                 </div>
@@ -464,7 +471,7 @@ export default function Details() {
                   <button
                     onClick={handleAction}
                     disabled={recordDownloadMutation.isPending}
-                    className="flex-grow py-3.5 px-6 bg-white hover:bg-gray-100 text-[#121212] rounded-xl font-bold text-xs tracking-wider uppercase transition-all shadow-xl flex items-center justify-center gap-2"
+                    className="flex-grow py-3 px-6 bg-primary hover:bg-primary/95 text-white rounded-lg font-bold text-xs tracking-wider uppercase transition-all shadow flex items-center justify-center gap-2 cursor-pointer"
                   >
                     <Download className="w-4 h-4" />
                     Download Instantly
@@ -475,10 +482,10 @@ export default function Details() {
                     onClick={handleLike}
                     disabled={toggleLikeMutation.isPending}
                     aria-label="Like wallpaper"
-                    className={`p-3.5 rounded-xl border transition-all ${
+                    className={`p-3 rounded-lg border transition-all cursor-pointer ${
                       isLiked
                         ? 'bg-rose-500/80 border-rose-500/20 text-white'
-                        : 'border-white/10 text-gray-300 hover:text-white hover:bg-white/5'
+                        : 'border-border text-text-muted hover:text-white hover:bg-surface-2'
                     }`}
                     title="Like this artwork"
                   >
@@ -490,10 +497,10 @@ export default function Details() {
                     onClick={handleFavorite}
                     disabled={toggleFavMutation.isPending}
                     aria-label="Save wallpaper"
-                    className={`p-3.5 rounded-xl border transition-all ${
+                    className={`p-3 rounded-lg border transition-all cursor-pointer ${
                       isFavorite
                         ? 'bg-amber-500/80 border-amber-500/20 text-white'
-                        : 'border-white/10 text-gray-300 hover:text-white hover:bg-white/5'
+                        : 'border-border text-text-muted hover:text-white hover:bg-surface-2'
                     }`}
                     title="Add to Favorites"
                   >
@@ -501,14 +508,15 @@ export default function Details() {
                   </button>
                 </div>
               )}
+
             </div>
 
-            <div className="space-y-2.5">
+            <div className="space-y-2">
               {hasAccess ? (
                 <div className="flex gap-2">
                   <button
                     onClick={handleOpenInstructions}
-                    className="flex-grow py-3.5 px-4 rounded-xl border border-accent/30 hover:border-accent text-accent hover:bg-accent/5 font-bold text-xs tracking-wider uppercase transition-all flex items-center justify-center gap-1.5 cursor-pointer shadow-lg shadow-accent/5"
+                    className="flex-grow py-2.5 px-4 rounded-lg border border-primary/30 hover:border-primary text-primary hover:bg-primary/5 font-bold text-xs tracking-wider uppercase transition-all flex items-center justify-center gap-1.5 cursor-pointer"
                   >
                     <Monitor className="w-4 h-4" />
                     Set as Wallpaper
@@ -518,7 +526,7 @@ export default function Details() {
                       setPreviewDevice(wallpaper.deviceType === 'mobile' ? 'mobile' : 'desktop');
                       setPreviewOpen(true);
                     }}
-                    className="py-3.5 px-4 rounded-xl border border-white/10 hover:border-white/20 text-gray-300 hover:text-white bg-white/2 hover:bg-white/5 font-bold text-xs tracking-wider uppercase transition-all flex items-center justify-center gap-1.5 cursor-pointer"
+                    className="py-2.5 px-4 rounded-lg border border-border hover:border-gray-500 text-text-muted hover:text-white bg-surface-2 transition-all flex items-center justify-center gap-1.5 cursor-pointer"
                   >
                     <Smartphone className="w-4 h-4" />
                     Preview
@@ -530,7 +538,7 @@ export default function Details() {
                     setPreviewDevice(wallpaper.deviceType === 'mobile' ? 'mobile' : 'desktop');
                     setPreviewOpen(true);
                   }}
-                  className="w-full py-3.5 px-4 rounded-xl border border-accent/25 hover:border-accent/50 text-accent hover:bg-accent/5 font-bold text-xs tracking-wider uppercase transition-all flex items-center justify-center gap-1.5 cursor-pointer shadow-lg"
+                  className="w-full py-2.5 px-4 rounded-lg border border-border hover:border-gray-500 text-text-muted hover:text-white bg-surface-2 font-bold text-xs tracking-wider uppercase transition-all flex items-center justify-center gap-1.5 cursor-pointer"
                 >
                   <Smartphone className="w-4.5 h-4.5" />
                   Preview On Device
@@ -541,12 +549,12 @@ export default function Details() {
               <div className="grid grid-cols-2 gap-2">
                 <button
                   onClick={handleShare}
-                  className="py-2.5 px-4 rounded-xl border border-white/5 bg-white/2 text-[10px] font-bold tracking-wider uppercase text-gray-400 hover:text-white hover:bg-white/5 transition flex items-center justify-center gap-1.5 cursor-pointer"
+                  className="py-2 px-4 rounded-lg border border-border bg-surface-2 text-[10px] font-bold tracking-wider uppercase text-text-muted hover:text-white transition flex items-center justify-center gap-1.5 cursor-pointer"
                 >
                   <Share2 className="w-3.5 h-3.5" />
                   Share Link
                 </button>
-                <div className="py-2.5 px-4 rounded-xl border border-white/5 bg-white/2 text-[10px] font-bold tracking-wider uppercase text-gray-400 flex items-center justify-center gap-1.5">
+                <div className="py-2 px-4 rounded-lg border border-border bg-surface-2 text-[10px] font-bold tracking-wider uppercase text-text-muted flex items-center justify-center gap-1.5">
                   <Image className="w-3.5 h-3.5" />
                   {wallpaper.resolution}
                 </div>
@@ -555,22 +563,22 @@ export default function Details() {
           </div>
 
           {/* Technical Metadata */}
-          <div className="space-y-3 pt-2 text-xs text-gray-400">
+          <div className="space-y-3 pt-2 text-xs text-text-muted">
             <div className="flex justify-between">
-              <span className="font-medium text-gray-500">Dimensions</span>
-              <span className="font-semibold text-gray-300">{wallpaper.resolution}</span>
+              <span className="font-medium text-text-muted">Dimensions</span>
+              <span className="font-semibold text-white">{wallpaper.resolution}</span>
             </div>
             <div className="flex justify-between">
-              <span className="font-medium text-gray-500">Format</span>
-              <span className="font-semibold text-gray-300 capitalize">{wallpaper.type} wallpaper</span>
+              <span className="font-medium text-text-muted">Format</span>
+              <span className="font-semibold text-white capitalize">{wallpaper.type} wallpaper</span>
             </div>
             <div className="flex justify-between">
-              <span className="font-medium text-gray-500">Device Layout</span>
-              <span className="font-semibold text-gray-300 capitalize">{wallpaper.deviceType}</span>
+              <span className="font-medium text-text-muted">Device Layout</span>
+              <span className="font-semibold text-white capitalize">{wallpaper.deviceType}</span>
             </div>
             <div className="flex justify-between">
-              <span className="font-medium text-gray-500">Released</span>
-              <span className="font-semibold text-gray-300 flex items-center gap-1">
+              <span className="font-medium text-text-muted">Released</span>
+              <span className="font-semibold text-white flex items-center gap-1">
                 <Calendar className="w-3.5 h-3.5" />
                 {new Date(wallpaper.createdAt).toLocaleDateString()}
               </span>
@@ -579,14 +587,14 @@ export default function Details() {
 
           {/* Tags cloud */}
           {wallpaper.tags && wallpaper.tags.length > 0 && (
-            <div className="pt-4 border-t border-white/5 space-y-2">
-              <p className="text-[10px] font-bold tracking-wider text-gray-500 uppercase">Tags</p>
+            <div className="pt-4 border-t border-border space-y-2">
+              <p className="text-[9px] font-bold tracking-widest text-text-muted uppercase">Tags</p>
               <div className="flex flex-wrap gap-1.5">
                 {wallpaper.tags.map((t) => (
                   <Link
                     key={t}
                     to={`/explore?search=${t}`}
-                    className="px-2.5 py-1 text-[10px] font-semibold tracking-wide bg-white/5 hover:bg-primary/10 border border-white/5 hover:border-primary/25 rounded-md text-gray-300 hover:text-primary transition"
+                    className="px-2.5 py-1 text-[10px] font-semibold tracking-wide bg-surface-2 hover:bg-primary/10 border border-border hover:border-primary/25 rounded text-text-muted hover:text-primary transition"
                   >
                     #{t}
                   </Link>
@@ -599,13 +607,13 @@ export default function Details() {
 
       {/* Related Wallpapers */}
       {related && related.length > 0 && (
-        <section className="space-y-6 pt-8 border-t border-white/5">
+        <section className="space-y-6 pt-12 border-t border-border">
           <div>
             <span className="text-[10px] font-bold text-primary tracking-widest uppercase">
-              Recommendation Engine
+              Curated Feed
             </span>
             <h3 className="font-display font-bold text-2xl text-white mt-0.5">
-              Related Designs
+              Related Creations
             </h3>
           </div>
 
@@ -629,49 +637,49 @@ export default function Details() {
       {showInstructions && Capacitor.isNativePlatform() && (
         <div 
           data-lenis-prevent
-          className="fixed inset-0 bg-[#121212]/80 backdrop-blur-md z-[100] flex items-center justify-center p-4"
+          className="fixed inset-0 bg-black/70 z-[100] flex items-center justify-center p-4"
         >
-          <div className="relative w-full max-w-sm rounded-3xl glass-panel-glow border-white/10 p-6 md:p-8 space-y-6 shadow-2xl animate-in fade-in-50 zoom-in-95 duration-200 text-center">
+          <div className="relative w-full max-w-sm rounded-2xl bg-surface border border-border p-6 md:p-8 space-y-6 shadow-2xl animate-in fade-in-50 zoom-in-95 duration-200 text-center">
             {/* Header */}
             <div className="flex flex-col items-center gap-3">
-              <div className="p-3.5 rounded-2xl bg-accent/10 border border-accent/20">
-                <Monitor className="w-8 h-8 text-accent animate-pulse" />
+              <div className="p-3.5 rounded-2xl bg-primary/10 border border-primary/20">
+                <Monitor className="w-8 h-8 text-primary" />
               </div>
               <div>
                 <h3 className="font-display font-black text-xl text-white">Apply Wallpaper</h3>
-                <p className="text-xs text-gray-400">Choose where to set this design</p>
+                <p className="text-xs text-text-muted">Choose where to set this design</p>
               </div>
             </div>
 
             {/* Loading state or picker actions */}
             {settingWallpaper ? (
               <div className="py-6 space-y-3 flex flex-col items-center">
-                <div className="w-8 h-8 rounded-full border-2 border-accent border-t-transparent animate-spin" />
+                <div className="w-8 h-8 rounded-full border-2 border-primary border-t-transparent animate-spin" />
                 <p className="text-xs text-gray-300 font-semibold animate-pulse">Applying to system settings...</p>
               </div>
             ) : (
               <div className="space-y-2 pt-2">
                 <button
                   onClick={() => handleSetNativeWallpaper('home')}
-                  className="w-full py-3 px-5 rounded-xl bg-white hover:bg-gray-100 text-[#121212] font-bold text-xs tracking-wider uppercase transition-all cursor-pointer shadow-md"
+                  className="w-full py-3 px-5 rounded-lg bg-primary hover:bg-primary/90 text-white font-bold text-xs tracking-wider uppercase transition-all cursor-pointer shadow-md"
                 >
                   Home Screen
                 </button>
                 <button
                   onClick={() => handleSetNativeWallpaper('lock')}
-                  className="w-full py-3 px-5 rounded-xl bg-white hover:bg-gray-100 text-[#121212] font-bold text-xs tracking-wider uppercase transition-all cursor-pointer shadow-md"
+                  className="w-full py-3 px-5 rounded-lg bg-primary hover:bg-primary/90 text-white font-bold text-xs tracking-wider uppercase transition-all cursor-pointer shadow-md"
                 >
                   Lock Screen
                 </button>
                 <button
                   onClick={() => handleSetNativeWallpaper('both')}
-                  className="w-full py-3 px-5 rounded-xl bg-accent hover:bg-accent/90 text-[#121212] font-bold text-xs tracking-wider uppercase transition-all cursor-pointer shadow-md shadow-accent/10"
+                  className="w-full py-3 px-5 rounded-lg bg-primary hover:bg-primary/90 text-white font-bold text-xs tracking-wider uppercase transition-all cursor-pointer shadow-md"
                 >
                   Home & Lock Screen
                 </button>
                 <button
                   onClick={() => setShowInstructions(false)}
-                  className="w-full py-3 px-5 rounded-xl border border-white/10 text-gray-400 hover:text-white hover:bg-white/5 font-semibold text-xs tracking-wider uppercase transition-all cursor-pointer"
+                  className="w-full py-3 px-5 rounded-lg border border-border text-text-muted hover:text-white hover:bg-surface-2 font-semibold text-xs tracking-wider uppercase transition-all cursor-pointer"
                 >
                   Cancel
                 </button>
@@ -685,31 +693,31 @@ export default function Details() {
       {showInstructions && !Capacitor.isNativePlatform() && (
         <div 
           data-lenis-prevent
-          className="fixed inset-0 bg-[#121212]/80 backdrop-blur-md z-[100] overflow-y-auto"
+          className="fixed inset-0 bg-black/70 z-[100] overflow-y-auto"
         >
           <div className="flex min-h-full items-center justify-center p-4 py-8">
-            <div className="relative w-full max-w-lg rounded-3xl glass-panel-glow border-white/10 p-6 md:p-8 space-y-6 shadow-2xl animate-in fade-in-50 zoom-in-95 duration-200">
+            <div className="relative w-full max-w-lg rounded-2xl bg-surface border border-border p-6 md:p-8 space-y-6 shadow-2xl animate-in fade-in-50 zoom-in-95 duration-200">
             {/* Close */}
             <button
               onClick={() => setShowInstructions(false)}
-              className="absolute top-4 right-4 p-2 rounded-full text-gray-500 hover:text-white hover:bg-white/10 transition cursor-pointer"
+              className="absolute top-4 right-4 p-2 rounded-full text-text-muted hover:text-white hover:bg-surface-2 transition cursor-pointer"
             >
               <X className="w-5 h-5" />
             </button>
 
             {/* Header */}
             <div className="flex items-center gap-3">
-              <div className="p-3 rounded-2xl bg-accent/10 border border-accent/20">
-                <Monitor className="w-6 h-6 text-accent" />
+              <div className="p-3 rounded-2xl bg-primary/10 border border-primary/20">
+                <Monitor className="w-6 h-6 text-primary" />
               </div>
               <div>
                 <h3 className="font-display font-black text-xl text-white">Set as Wallpaper</h3>
-                <p className="text-xs text-gray-400">Step-by-step setup guide for your device</p>
+                <p className="text-xs text-text-muted">Step-by-step setup guide for your device</p>
               </div>
             </div>
 
             {/* OS Tabs */}
-            <div className="grid grid-cols-4 gap-1 p-1 rounded-xl bg-white/[0.02] border border-white/5">
+            <div className="grid grid-cols-4 gap-1 p-1 rounded-lg bg-surface-2 border border-border">
               {[
                 { id: 'windows', label: 'Windows' },
                 { id: 'mac', label: 'macOS' },
@@ -719,10 +727,10 @@ export default function Details() {
                 <button
                   key={tab.id}
                   onClick={() => setSelectedOS(tab.id)}
-                  className={`py-2 text-[10px] md:text-xs font-bold rounded-lg transition-all border cursor-pointer ${
+                  className={`py-2 text-[10px] md:text-xs font-bold rounded transition-all border cursor-pointer ${
                     selectedOS === tab.id
-                      ? 'bg-accent/10 border-accent/25 text-accent shadow-sm'
-                      : 'border-transparent text-gray-400 hover:text-white hover:bg-white/5'
+                      ? 'bg-surface border-border text-primary shadow-sm'
+                      : 'border-transparent text-text-muted hover:text-white hover:bg-surface'
                   }`}
                 >
                   {tab.label}
@@ -731,13 +739,13 @@ export default function Details() {
             </div>
 
             {/* Step Guide List */}
-            <div className="space-y-4 p-5 rounded-2xl bg-white/[0.02] border border-white/5">
+            <div className="space-y-4 p-5 rounded-2xl bg-surface-2 border border-border">
               {/* Windows Instructions */}
               {selectedOS === 'windows' && wallpaper.type === 'live' && (
                 <div className="space-y-4">
-                  <div className="p-4 rounded-2xl bg-primary/10 border border-primary/20 space-y-3 text-left">
+                  <div className="p-4 rounded-xl bg-primary/10 border border-primary/20 space-y-3 text-left">
                     <div className="flex gap-2.5 items-start">
-                      <Info className="w-5 h-5 text-primary flex-shrink-0 mt-0.5 animate-pulse" />
+                      <Info className="w-5 h-5 text-primary flex-shrink-0 mt-0.5" />
                       <div>
                         <h4 className="font-bold text-xs text-white">Lively Wallpaper Required</h4>
                         <p className="text-[11px] text-gray-300 leading-relaxed mt-1">
@@ -750,7 +758,7 @@ export default function Details() {
                         href="https://apps.microsoft.com/detail/9ntm2qc6qws7"
                         target="_blank"
                         rel="noopener noreferrer"
-                        className="py-2 px-3 rounded-xl bg-primary hover:bg-primary/90 text-white font-bold text-[10px] tracking-wider uppercase transition-all flex items-center justify-center gap-1.5 cursor-pointer shadow-lg shadow-primary/15"
+                        className="py-2 px-3 rounded-lg bg-primary hover:bg-primary/90 text-white font-bold text-[10px] tracking-wider uppercase transition-all flex items-center justify-center gap-1.5 cursor-pointer shadow"
                       >
                         <Download className="w-3.5 h-3.5" />
                         Microsoft Store
@@ -759,7 +767,7 @@ export default function Details() {
                         href="https://rocksdanister.github.io/lively/"
                         target="_blank"
                         rel="noopener noreferrer"
-                        className="py-2 px-3 rounded-xl border border-white/10 hover:border-white/20 hover:bg-white/5 text-gray-300 hover:text-white font-bold text-[10px] tracking-wider uppercase transition-all flex items-center justify-center gap-1.5 cursor-pointer"
+                        className="py-2 px-3 rounded-lg border border-border hover:bg-surface-2 text-text-muted hover:text-white font-bold text-[10px] tracking-wider uppercase transition-all flex items-center justify-center gap-1.5 cursor-pointer"
                       >
                         <Globe className="w-3.5 h-3.5" />
                         Official Website
@@ -840,13 +848,13 @@ export default function Details() {
               <button
                 onClick={handleAction}
                 disabled={recordDownloadMutation.isPending}
-                className="w-full py-3.5 px-6 rounded-xl bg-accent hover:bg-accent/90 text-[#121212] font-bold text-xs tracking-wider uppercase transition-all shadow-xl flex items-center justify-center gap-2 cursor-pointer"
+                className="w-full py-3 px-6 rounded-lg bg-primary hover:bg-primary/95 text-white font-bold text-xs tracking-wider uppercase transition-all shadow flex items-center justify-center gap-2 cursor-pointer"
               >
                 <Download className="w-4 h-4" />
                 Download Artwork
               </button>
-              <div className="flex gap-2 items-start text-[10px] text-gray-500 leading-relaxed">
-                <Info className="w-4 h-4 flex-shrink-0 text-accent animate-pulse" />
+              <div className="flex gap-2 items-start text-[10px] text-text-muted leading-relaxed">
+                <Info className="w-4 h-4 flex-shrink-0 text-primary" />
                 <p>
                   Security sandbox rule: Web applications cannot directly modify system settings. Doing this download-and-apply step ensures maximum security for your device.
                 </p>
@@ -859,40 +867,37 @@ export default function Details() {
 
       {/* Simulated Ad Player Modal Overlay */}
       {playingAd && (
-        <div className="fixed inset-0 bg-[#0a0a0a]/95 backdrop-blur-xl z-[150] flex items-center justify-center p-4 animate-in fade-in duration-200">
-          <div className="w-full max-w-md rounded-3xl glass-panel-glow border-white/10 p-6 md:p-8 space-y-6 shadow-2xl text-center relative overflow-hidden animate-in zoom-in-95 duration-200">
-            <div className="absolute -top-20 -left-20 w-40 h-40 bg-primary/20 rounded-full blur-3xl pointer-events-none" />
-            <div className="absolute -bottom-20 -right-20 w-40 h-40 bg-secondary/20 rounded-full blur-3xl pointer-events-none" />
-
+        <div className="fixed inset-0 bg-black/90 z-[150] flex items-center justify-center p-4 animate-in fade-in duration-200">
+          <div className="w-full max-w-md rounded-2xl bg-surface border border-border p-6 md:p-8 space-y-6 shadow-2xl text-center relative overflow-hidden animate-in zoom-in-95 duration-200">
             <div className="space-y-4">
-              <span className="px-3 py-1 text-[10px] font-black tracking-widest bg-white/5 border border-white/10 text-accent uppercase rounded-full">
+              <span className="px-3 py-1 text-[10px] font-black tracking-widest bg-surface-2 border border-border text-primary uppercase rounded-full">
                 Sponsor Advertisement
               </span>
               <h3 className="font-display font-black text-xl text-white">
                 Unlocking Premium Wallpaper
               </h3>
-              <p className="text-xs text-gray-400">
+              <p className="text-xs text-text-muted">
                 Please wait while we prepare your high-resolution download link.
               </p>
             </div>
 
-            <div className="w-full aspect-video rounded-2xl bg-[#121212] border border-white/5 relative overflow-hidden flex flex-col items-center justify-center">
-              <div className="absolute inset-0 bg-cover bg-center filter brightness-50 opacity-40 animate-pulse" style={{ backgroundImage: `url(${optimiseUrl(wallpaper.previewImage, { width: 600 })})` }} />
+            <div className="w-full aspect-video rounded-2xl bg-surface-2 border border-border relative overflow-hidden flex flex-col items-center justify-center">
+              <div className="absolute inset-0 bg-cover bg-center filter brightness-50 opacity-45 animate-pulse" style={{ backgroundImage: `url(${optimiseUrl(wallpaper.previewImage, { width: 600 })})` }} />
               
               <div className="relative z-10 space-y-4 flex flex-col items-center">
                 <div className="relative w-16 h-16 flex items-center justify-center">
-                  <div className="absolute inset-0 rounded-full border-4 border-white/5 border-t-accent animate-spin" />
+                  <div className="absolute inset-0 rounded-full border-4 border-white/5 border-t-primary animate-spin" />
                   <span className="font-display font-black text-[10px] text-white uppercase tracking-wider">
                     {adCountdown > 0 ? `${adCountdown}s` : 'Processing'}
                   </span>
                 </div>
-                <p className="text-[10px] font-bold tracking-widest text-accent uppercase animate-pulse">
+                <p className="text-[10px] font-bold tracking-widest text-primary uppercase animate-pulse">
                   {adCountdown > 0 ? 'Watching Advertisement...' : 'Unlocking Artwork...'}
                 </p>
               </div>
             </div>
 
-            <div className="text-[10px] text-gray-500 italic leading-relaxed pt-2">
+            <div className="text-[10px] text-text-muted italic leading-relaxed pt-2">
               Watching this short ad helps us keep the servers running and pay the original artists. Thank you for your support!
             </div>
           </div>
@@ -901,22 +906,22 @@ export default function Details() {
 
       {/* CUSTOM CONFIRMATION MODAL */}
       {confirmOpen && (
-        <div className="fixed inset-0 bg-[#121212]/80 backdrop-blur-sm z-50 flex items-center justify-center p-4 animate-fade-in">
-          <div className="w-full max-w-md bg-[#1A1A1A] border border-white/10 rounded-2xl p-6 space-y-6 relative shadow-2xl">
+        <div className="fixed inset-0 bg-black/70 z-50 flex items-center justify-center p-4">
+          <div className="w-full max-w-md bg-surface border border-border rounded-2xl p-6 space-y-6 relative shadow-2xl">
             <div className="space-y-2">
               <h3 className="font-display font-bold text-lg text-white">
                 {confirmTitle}
               </h3>
-              <p className="text-xs text-gray-400 leading-relaxed">
+              <p className="text-xs text-text-muted leading-relaxed">
                 {confirmMessage}
               </p>
             </div>
 
-            <div className="flex justify-end gap-2 border-t border-white/5 pt-4">
+            <div className="flex justify-end gap-2 border-t border-border pt-4">
               <button
                 type="button"
                 onClick={() => setConfirmOpen(false)}
-                className="px-4 py-2 border border-white/5 bg-[#1A1A1A]/50 hover:bg-[#1A1A1A] text-gray-300 font-semibold text-xs rounded-xl transition cursor-pointer"
+                className="px-4 py-2 border border-border bg-surface hover:bg-surface-2 text-text-muted font-semibold text-xs rounded-lg transition cursor-pointer"
               >
                 Cancel
               </button>
@@ -926,7 +931,7 @@ export default function Details() {
                   if (confirmOnApprove) confirmOnApprove();
                   setConfirmOpen(false);
                 }}
-                className="px-5 py-2 text-white font-bold text-xs rounded-xl shadow-lg bg-rose-600 hover:bg-rose-500 shadow-rose-600/10 transition cursor-pointer"
+                className="px-5 py-2 text-white font-bold text-xs rounded-lg shadow bg-rose-600 hover:bg-rose-500 transition cursor-pointer"
               >
                 Confirm
               </button>
@@ -937,46 +942,42 @@ export default function Details() {
 
       {/* SOCIAL SHARING MODAL */}
       {shareOpen && (
-        <div className="fixed inset-0 bg-[#121212]/80 backdrop-blur-sm z-50 flex items-center justify-center p-4">
-          <div className="w-full max-w-md bg-[#1A1A1A] border border-white/10 rounded-2xl p-6 space-y-6 relative shadow-2xl">
+        <div 
+          data-lenis-prevent
+          className="fixed inset-0 bg-black/70 z-50 overflow-y-auto"
+        >
+          <div className="flex min-h-full items-center justify-center p-4">
+            <div className="w-full max-w-md bg-surface border border-border rounded-2xl p-6 space-y-6 relative shadow-2xl">
             <button
               type="button"
               onClick={() => setShareOpen(false)}
-              className="absolute top-4 right-4 text-gray-400 hover:text-white cursor-pointer"
+              className="absolute top-4 right-4 text-text-muted hover:text-white cursor-pointer"
             >
               <X className="w-5 h-5" />
             </button>
             <div className="space-y-2">
               <h3 className="font-display font-bold text-lg text-white">Share Artwork</h3>
-              <p className="text-xs text-gray-400">Share this masterpiece wallpaper design with your friends.</p>
+              <p className="text-xs text-text-muted">Copy this link or post directly to your social platforms.</p>
             </div>
 
+            {/* Quick clipboard copy */}
             <div className="flex gap-2">
-              <input
-                type="text"
-                readOnly
-                value={window.location.href}
-                className="flex-grow px-3 py-2 text-xs glass-input select-all"
-              />
               <button
-                type="button"
-                onClick={() => {
-                  navigator.clipboard.writeText(window.location.href);
-                  addToast('Link copied to clipboard!', 'success');
-                }}
-                className="px-4 py-2 bg-primary hover:bg-primary/95 text-white font-bold text-xs rounded-xl shadow-lg transition cursor-pointer flex items-center gap-1"
+                onClick={handleShare}
+                className="flex-grow py-3 px-4 rounded-lg border border-border bg-surface-2 text-text-muted hover:text-white text-xs font-semibold flex items-center justify-between cursor-pointer"
               >
-                <Link2 className="w-3.5 h-3.5" />
-                Copy
+                <span className="truncate pr-4">{window.location.href}</span>
+                <Link2 className="w-4 h-4 flex-shrink-0" />
               </button>
             </div>
 
+            {/* Social Grid */}
             <div className="grid grid-cols-2 gap-3 pt-2">
               <a
-                href={`https://twitter.com/intent/tweet?text=Check%20out%20this%20amazing%20wallpaper%20on%20VeloraHD!&url=${encodeURIComponent(window.location.href)}`}
+                href={`https://twitter.com/intent/tweet?url=${encodeURIComponent(window.location.href)}&text=${encodeURIComponent(`Check out this premium 4K wallpaper "${wallpaper.title}" on VeloraHD!`)}`}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="py-2.5 px-4 rounded-xl border border-white/5 bg-white/2 text-[10px] font-bold tracking-wider uppercase text-gray-300 hover:text-white hover:bg-slate-900 transition flex items-center justify-center gap-1.5"
+                className="py-2.5 px-4 rounded-lg border border-border bg-surface-2 text-[10px] font-bold tracking-wider uppercase text-text-muted hover:text-white hover:bg-white/5 transition flex items-center justify-center gap-1.5"
               >
                 <svg className="w-3.5 h-3.5 text-white fill-current" viewBox="0 0 24 24" aria-hidden="true">
                   <path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z" />
@@ -987,18 +988,17 @@ export default function Details() {
                 href={`https://api.whatsapp.com/send?text=Check%20out%20this%20amazing%20wallpaper%20on%20VeloraHD!%20${encodeURIComponent(window.location.href)}`}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="py-2.5 px-4 rounded-xl border border-white/5 bg-white/2 text-[10px] font-bold tracking-wider uppercase text-gray-300 hover:text-white hover:bg-[#25D366]/10 hover:border-[#25D366]/30 transition flex items-center justify-center gap-1.5"
+                className="py-2.5 px-4 rounded-lg border border-border bg-surface-2 text-[10px] font-bold tracking-wider uppercase text-text-muted hover:text-white hover:bg-white/5 transition flex items-center justify-center gap-1.5"
               >
                 <svg className="w-3.5 h-3.5 text-[#25D366] fill-current" viewBox="0 0 24 24">
                   <path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L0 24l6.335-1.662c1.746.953 3.71 1.458 5.705 1.458h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z" />
                 </svg>
-                WhatsApp
               </a>
               <a
                 href={`https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(window.location.href)}`}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="py-2.5 px-4 rounded-xl border border-white/5 bg-white/2 text-[10px] font-bold tracking-wider uppercase text-gray-300 hover:text-white hover:bg-[#1877F2]/10 hover:border-[#1877F2]/30 transition flex items-center justify-center gap-1.5"
+                className="py-2.5 px-4 rounded-lg border border-border bg-surface-2 text-[10px] font-bold tracking-wider uppercase text-text-muted hover:text-white hover:bg-white/5 transition flex items-center justify-center gap-1.5"
               >
                 <svg className="w-3.5 h-3.5 text-[#1877F2] fill-current" viewBox="0 0 24 24">
                   <path d="M22 12c0-5.52-4.48-10-10-10S2 6.48 2 12c0 4.84 3.44 8.87 8 9.8V15H8v-3h2V9.5C10 7.57 11.57 6 13.5 6H16v3h-2c-.55 0-1 .45-1 1v2h3v3h-3v6.95c4.56-.93 8-4.96 8-9.75z" />
@@ -1009,7 +1009,7 @@ export default function Details() {
                 href={`https://pinterest.com/pin/create/button/?url=${encodeURIComponent(window.location.href)}&media=${encodeURIComponent(wallpaper.previewImage)}&description=${encodeURIComponent(wallpaper.title)}`}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="py-2.5 px-4 rounded-xl border border-white/5 bg-white/2 text-[10px] font-bold tracking-wider uppercase text-gray-300 hover:text-white hover:bg-[#BD081C]/10 hover:border-[#BD081C]/30 transition flex items-center justify-center gap-1.5"
+                className="py-2.5 px-4 rounded-lg border border-border bg-surface-2 text-[10px] font-bold tracking-wider uppercase text-text-muted hover:text-white hover:bg-white/5 transition flex items-center justify-center gap-1.5"
               >
                 <svg className="w-3.5 h-3.5 text-[#BD081C] fill-current" viewBox="0 0 24 24">
                   <path d="M12.017 0C5.396 0 .029 5.367.029 11.987c0 5.079 3.158 9.417 7.618 11.162-.105-.949-.199-2.403.041-3.439.219-.937 1.406-5.966 1.406-5.966s-.359-.72-.359-1.781c0-1.663.967-2.906 2.17-2.906 1.024 0 1.517.769 1.517 1.693 0 1.029-.655 2.568-.994 3.995-.283 1.194.599 2.169 1.777 2.169 2.133 0 3.772-2.249 3.772-5.495 0-2.873-2.064-4.882-5.012-4.882-3.414 0-5.418 2.561-5.418 5.207 0 1.031.397 2.138.893 2.738.098.119.112.224.083.345l-.333 1.36c-.053.22-.174.267-.402.161-1.499-.698-2.436-2.889-2.436-4.649 0-3.785 2.75-7.262 7.929-7.262 4.162 0 7.397 2.965 7.397 6.93 0 4.136-2.607 7.464-6.227 7.464-1.215 0-2.359-.631-2.75-1.378l-.748 2.853c-.271 1.043-1.002 2.35-1.492 3.146 1.124.347 2.317.535 3.554.535 6.621 0 11.988-5.367 11.988-11.987C24.005 5.367 18.639 0 12.017 0z" />
@@ -1017,35 +1017,41 @@ export default function Details() {
                 Pinterest
               </a>
             </div>
+
           </div>
+        </div>
         </div>
       )}
 
       {/* DEVICE PREVIEW MODAL */}
       {previewOpen && (
-        <div className="fixed inset-0 bg-[#121212]/85 backdrop-blur-md z-50 flex items-center justify-center p-4">
-          <div className="w-full max-w-3xl bg-[#1A1A1A] border border-white/10 rounded-3xl p-6 space-y-6 relative shadow-2xl flex flex-col items-center">
-            <button
-              type="button"
-              onClick={() => setPreviewOpen(false)}
-              className="absolute top-4 right-4 text-gray-400 hover:text-white cursor-pointer"
-            >
-              <X className="w-5 h-5" />
-            </button>
+        <div 
+          data-lenis-prevent
+          className="fixed inset-0 bg-black/80 z-50 overflow-y-auto"
+        >
+          <div className="flex min-h-full items-center justify-center p-4 py-8">
+            <div className="w-full max-w-3xl bg-surface border border-border rounded-2xl p-6 space-y-6 relative shadow-2xl flex flex-col items-center animate-in fade-in duration-150">
+              <button
+                type="button"
+                onClick={() => setPreviewOpen(false)}
+                className="absolute top-4 right-4 text-text-muted hover:text-white cursor-pointer"
+              >
+                <X className="w-5 h-5" />
+              </button>
             <div className="text-center space-y-1">
               <h3 className="font-display font-bold text-lg text-white">Device Live Preview</h3>
-              <p className="text-xs text-gray-400">See how this artwork fits on your desktop and phone screens.</p>
+              <p className="text-xs text-text-muted">See how this artwork fits on desktop and phone screen layouts.</p>
             </div>
 
             {/* Toggle Preview device */}
-            <div className="inline-flex p-1 rounded-full bg-white/5 border border-white/10 backdrop-blur-sm">
+            <div className="inline-flex p-1 rounded-full bg-surface-2 border border-border">
               <button
                 type="button"
                 onClick={() => setPreviewDevice('desktop')}
                 className={`px-4 py-1.5 rounded-full text-[10px] font-bold tracking-wider uppercase transition-all flex items-center gap-1.5 cursor-pointer ${
                   previewDevice === 'desktop'
-                    ? 'bg-primary text-white shadow-lg shadow-primary/20'
-                    : 'text-gray-400 hover:text-white'
+                    ? 'bg-primary text-white shadow'
+                    : 'text-text-muted hover:text-white'
                 }`}
               >
                 <Monitor className="w-3.5 h-3.5" /> Desktop
@@ -1055,8 +1061,8 @@ export default function Details() {
                 onClick={() => setPreviewDevice('mobile')}
                 className={`px-4 py-1.5 rounded-full text-[10px] font-bold tracking-wider uppercase transition-all flex items-center gap-1.5 cursor-pointer ${
                   previewDevice === 'mobile'
-                    ? 'bg-primary text-white shadow-lg shadow-primary/20'
-                    : 'text-gray-400 hover:text-white'
+                    ? 'bg-primary text-white shadow'
+                    : 'text-text-muted hover:text-white'
                 }`}
               >
                 <Smartphone className="w-3.5 h-3.5" /> Mobile
@@ -1064,7 +1070,7 @@ export default function Details() {
             </div>
 
             {/* Preview Frame Area */}
-            <div className="w-full min-h-[350px] flex items-center justify-center py-4 bg-slate-950/20 rounded-2xl border border-white/5 relative overflow-hidden">
+            <div className="w-full min-h-[350px] flex items-center justify-center py-6 bg-surface-2 rounded-2xl border border-border relative overflow-hidden">
               {previewDevice === 'desktop' ? (
                 /* Desktop Monitor Frame */
                 <div className="flex flex-col items-center">
@@ -1074,7 +1080,7 @@ export default function Details() {
                       alt={wallpaper.title}
                       className="absolute inset-0 w-full h-full object-cover"
                     />
-                    <div className="absolute inset-x-0 bottom-1 flex justify-center opacity-60">
+                    <div className="absolute inset-x-0 bottom-1 flex justify-center opacity-65">
                       <div className="px-4 py-1 rounded bg-black/60 backdrop-blur-md flex gap-2.5">
                         <div className="w-2.5 h-2.5 rounded bg-white/20" />
                         <div className="w-2.5 h-2.5 rounded bg-white/20" />
@@ -1083,12 +1089,12 @@ export default function Details() {
                     </div>
                   </div>
                   {/* Laptop Base Stand */}
-                  <div className="w-[100px] h-[24px] bg-neutral-800 border-t border-neutral-700 shadow-md animate-in slide-in-from-bottom" />
-                  <div className="w-[180px] h-[6px] bg-neutral-700 rounded-full shadow-lg" />
+                  <div className="w-[100px] h-[24px] bg-neutral-800 border-t border-neutral-700 shadow" />
+                  <div className="w-[180px] h-[6px] bg-neutral-700 rounded-full shadow" />
                 </div>
               ) : (
                 /* Mobile Phone Frame */
-                <div className="w-[200px] h-[390px] rounded-[36px] border-[6px] border-neutral-800 bg-neutral-950 shadow-2xl relative overflow-hidden flex flex-col justify-between p-4 animate-in zoom-in-95">
+                <div className="w-[200px] h-[390px] rounded-[36px] border-[6px] border-neutral-800 bg-neutral-950 shadow-2xl relative overflow-hidden flex flex-col justify-between p-4">
                   {/* Dynamic Island Notcher */}
                   <div className="absolute top-2 left-1/2 -translate-x-1/2 w-16 h-3 rounded-full bg-black z-20" />
                   
@@ -1108,18 +1114,18 @@ export default function Details() {
                   </div>
 
                   {/* Bottom Home indicator */}
-                  <div className="relative z-10 mx-auto w-24 h-1 bg-white/80 rounded-full mb-1 drop-shadow" />
+                  <div className="relative z-10 mx-auto w-24 h-1 bg-white/85 rounded-full mb-1" />
                 </div>
               )}
             </div>
 
-            <div className="text-[10px] text-gray-500 max-w-sm text-center leading-relaxed">
+            <div className="text-[10px] text-text-muted max-w-sm text-center leading-relaxed">
               Resolution shown: {wallpaper.resolution} ({wallpaper.deviceType} optimized). Drag-and-zoom previews represent simulated setups.
             </div>
           </div>
         </div>
+        </div>
       )}
-
     </div>
   );
 }

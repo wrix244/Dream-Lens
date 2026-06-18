@@ -67,7 +67,7 @@ export default function WallpaperCard({ wallpaper, purchased = false }) {
 
   return (
     <div
-      className="group relative rounded-2xl overflow-hidden glass-card aspect-[4/5] flex flex-col justify-end"
+      className="group relative rounded-2xl overflow-hidden card dark-card aspect-[4/5] flex flex-col justify-end"
       onContextMenu={(e) => e.preventDefault()}
     >
       {/* Background Media Container */}
@@ -78,7 +78,7 @@ export default function WallpaperCard({ wallpaper, purchased = false }) {
             poster={optimiseUrl(wallpaper.previewImage, { width: 800 })}
             hoverToPlay={true}
             draggable="false"
-            className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500 pointer-events-none select-none"
+            className="w-full h-full object-cover group-hover:scale-102 transition-transform duration-750 pointer-events-none select-none"
           />
         ) : (
           <img
@@ -90,29 +90,28 @@ export default function WallpaperCard({ wallpaper, purchased = false }) {
             width={400}
             height={500}
             draggable="false"
-            className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500 pointer-events-none select-none"
+            className="w-full h-full object-cover group-hover:scale-102 transition-transform duration-750 pointer-events-none select-none"
           />
         )}
         
         {/* Soft shadow gradients */}
-        <div className="absolute inset-0 bg-gradient-to-t from-[#121212] via-[#121212]/30 to-transparent opacity-80 z-1 pointer-events-none select-none" />
+        <div className="absolute inset-0 bg-gradient-to-t from-[#09090b] via-[#09090b]/40 to-transparent opacity-90 z-1 pointer-events-none select-none" />
       </Link>
 
       {/* Top badges bar */}
       <div className="absolute top-3 inset-x-3 flex justify-between items-start z-20">
         <div className="flex flex-col gap-1.5">
-          {/* Static/Live and device type badges */}
           <div className="flex flex-wrap gap-1">
             {wallpaper.type === 'live' && (
-              <span className="text-[10px] font-bold tracking-wide bg-accent/80 text-white px-2 py-0.5 rounded-full backdrop-blur-sm uppercase">
+              <span className="text-[9px] font-bold tracking-wider bg-primary text-white px-2 py-0.5 rounded uppercase">
                 Live
               </span>
             )}
-            <span className="text-[10px] font-semibold tracking-wide bg-[#121212]/70 border border-white/10 px-2 py-0.5 rounded-full capitalize backdrop-blur-sm text-gray-300">
+            <span className="text-[9px] font-semibold tracking-wider bg-surface/80 border border-border px-2 py-0.5 rounded capitalize text-gray-300">
               {wallpaper.deviceType}
             </span>
             {wallpaper.isPremium && (
-              <span className="text-[10px] font-semibold tracking-wide bg-amber-500/80 text-[#121212] px-2 py-0.5 rounded-full flex items-center gap-0.5 backdrop-blur-sm">
+              <span className="text-[9px] font-semibold tracking-wider bg-amber-500 text-black px-2 py-0.5 rounded flex items-center gap-0.5">
                 <Lock className="w-2.5 h-2.5" />
                 Premium
               </span>
@@ -127,10 +126,10 @@ export default function WallpaperCard({ wallpaper, purchased = false }) {
             onClick={handleLike}
             disabled={toggleLikeMutation.isPending}
             aria-label="Like wallpaper"
-            className={`p-2 rounded-full backdrop-blur-md border border-white/10 transition-all ${
+            className={`p-2 rounded-lg border transition-all cursor-pointer ${
               isLiked
-                ? 'bg-rose-500/80 border-rose-500/20 text-white'
-                : 'bg-[#121212]/40 text-gray-300 hover:text-white hover:bg-[#121212]/60'
+                ? 'bg-rose-500 border-rose-600 text-white'
+                : 'bg-surface/50 border-border text-gray-300 hover:text-white hover:bg-surface'
             }`}
             title="Like"
           >
@@ -142,10 +141,10 @@ export default function WallpaperCard({ wallpaper, purchased = false }) {
             onClick={handleFavorite}
             disabled={toggleFavMutation.isPending}
             aria-label="Save wallpaper"
-            className={`p-2 rounded-full backdrop-blur-md border border-white/10 transition-all ${
+            className={`p-2 rounded-lg border transition-all cursor-pointer ${
               isFavorite
-                ? 'bg-amber-500/80 border-amber-500/20 text-white'
-                : 'bg-[#121212]/40 text-gray-300 hover:text-white hover:bg-[#121212]/60'
+                ? 'bg-amber-500 border-amber-600 text-white'
+                : 'bg-surface/50 border-border text-gray-300 hover:text-white hover:bg-surface'
             }`}
             title="Add to Favorites"
           >
@@ -155,13 +154,13 @@ export default function WallpaperCard({ wallpaper, purchased = false }) {
       </div>
 
       {/* Details & Action panel at bottom */}
-      <div className="p-3 md:p-4 relative z-10 w-full flex items-end justify-between pointer-events-none">
+      <div className="p-4 relative z-10 w-full flex items-end justify-between pointer-events-none">
         {/* Left: Text Details */}
         <div className="block min-w-0 flex-1 pr-2">
-          <h3 className="font-display font-semibold text-sm md:text-base text-white truncate drop-shadow-md group-hover:text-primary transition-colors">
+          <h3 className="font-display font-semibold text-sm text-white truncate drop-shadow group-hover:text-primary transition-colors">
             {wallpaper.title}
           </h3>
-          <p className="text-[9px] md:text-[11px] text-gray-400 font-medium tracking-wide truncate">
+          <p className="text-[10px] text-text-muted font-medium tracking-wide truncate">
             {wallpaper.category} • {wallpaper.resolution}
           </p>
         </div>
@@ -171,10 +170,10 @@ export default function WallpaperCard({ wallpaper, purchased = false }) {
           <button
             onClick={handleDownload}
             disabled={recordDownloadMutation.isPending}
-            className={`flex items-center gap-1 px-2.5 py-1.5 rounded-xl text-[10px] md:text-xs font-semibold tracking-wide transition-all shadow-lg ${
+            className={`flex items-center gap-1 px-3 py-1.5 rounded-lg text-[10px] font-semibold tracking-wider uppercase transition-all shadow ${
               wallpaper.isPremium && !hasAccess
-                ? 'bg-primary text-white shadow-primary/20 hover:bg-primary/95'
-                : 'bg-white text-[#121212] hover:bg-gray-100'
+                ? 'bg-primary text-white hover:bg-primary/95'
+                : 'bg-white text-black hover:bg-gray-100'
             }`}
           >
             {wallpaper.isPremium && !hasAccess ? (
@@ -184,7 +183,7 @@ export default function WallpaperCard({ wallpaper, purchased = false }) {
               </>
             ) : (
               <>
-                <Download className="w-3 h-3 animate-bounce" />
+                <Download className="w-3 h-3" />
                 <span>Get</span>
               </>
             )}

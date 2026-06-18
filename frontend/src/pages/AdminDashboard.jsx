@@ -913,9 +913,9 @@ export default function AdminDashboard() {
             </h3>
 
             <form onSubmit={handleFormSubmit} className="space-y-4">
-              <div className="grid grid-cols-2 gap-4">
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                 {/* Title */}
-                <div className="space-y-1.5 col-span-2">
+                <div className="space-y-1.5 col-span-1 sm:col-span-2">
                   <label className="text-[10px] font-bold text-gray-400 uppercase tracking-wide">Title</label>
                   <input
                     type="text"
@@ -927,7 +927,7 @@ export default function AdminDashboard() {
                 </div>
 
                 {/* Description */}
-                <div className="space-y-1.5 col-span-2">
+                <div className="space-y-1.5 col-span-1 sm:col-span-2">
                   <label className="text-[10px] font-bold text-gray-400 uppercase tracking-wide">Description</label>
                   <textarea
                     value={description}
@@ -937,7 +937,7 @@ export default function AdminDashboard() {
                 </div>
 
                 {/* Category */}
-                <div className="space-y-1.5">
+                <div className={`space-y-1.5 transition-all duration-300 ${showAddCategoryInput ? 'col-span-1 sm:col-span-2' : 'col-span-1'}`}>
                   <div className="flex justify-between items-center">
                     <label className="text-[10px] font-bold text-gray-400 uppercase tracking-wide">Category</label>
                     <button
@@ -1027,7 +1027,7 @@ export default function AdminDashboard() {
                 </div>
 
                 {/* Premium toggle */}
-                <div className="space-y-1.5 flex items-center justify-between border border-white/5 rounded-xl px-4 py-2 col-span-2">
+                <div className="space-y-1.5 flex items-center justify-between border border-white/5 rounded-xl px-4 py-2 col-span-1 sm:col-span-2">
                   <div className="space-y-0.5">
                     <p className="text-xs font-semibold text-white">Premium Wallpaper</p>
                     <p className="text-[10px] text-gray-400">Require checkout simulated payment to download</p>
@@ -1042,7 +1042,7 @@ export default function AdminDashboard() {
 
                 {/* Price (Only enabled if premium) */}
                 {isPremium && (
-                  <div className="space-y-1.5 col-span-2">
+                  <div className="space-y-1.5 col-span-1 sm:col-span-2">
                     <label className="text-[10px] font-bold text-gray-400 uppercase tracking-wide">Price ($ USD)</label>
                     <input
                       type="number"
@@ -1057,7 +1057,7 @@ export default function AdminDashboard() {
                 )}
 
                 {/* Tags */}
-                <div className="space-y-1.5 col-span-2">
+                <div className="space-y-1.5 col-span-1 sm:col-span-2">
                   <label className="text-[10px] font-bold text-gray-400 uppercase tracking-wide">Tags (comma-separated)</label>
                   <input
                     type="text"
@@ -1069,9 +1069,9 @@ export default function AdminDashboard() {
                 </div>
 
                 {/* File Upload / Link Inputs */}
-                <div className="space-y-2 col-span-2 border-t border-white/5 pt-4">
+                <div className="space-y-2 col-span-1 sm:col-span-2 border-t border-white/5 pt-4">
                   <h4 className="text-[10px] font-bold text-primary uppercase tracking-wider">Asset Source</h4>
-                  <div className="grid grid-cols-2 gap-4">
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                     {/* Preview Image */}
                     <div className="space-y-1.5">
                       <label className="text-[10px] font-bold text-gray-400 uppercase tracking-wide">Preview Image (Optional)</label>

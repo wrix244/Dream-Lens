@@ -52,7 +52,7 @@ export default function LivePlayer({ src, poster, autoplay = false, hoverToPlay 
 
   return (
     <div 
-      className={`relative w-full h-full overflow-hidden ${className}`}
+      className={`relative w-full h-full overflow-hidden dark-card ${className}`}
       onMouseEnter={handleHoverStart}
       onMouseLeave={handleHoverEnd}
     >
@@ -88,7 +88,7 @@ export default function LivePlayer({ src, poster, autoplay = false, hoverToPlay 
           </button>
           <button
             onClick={handlePlayToggle}
-            className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-primary/80 backdrop-blur-md text-white border border-primary/20 hover:bg-primary transition text-xs font-semibold"
+            className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-[#1A1A1A]/60 backdrop-blur-md text-white border border-white/10 hover:bg-slate-800 transition text-xs font-semibold cursor-pointer"
           >
             <Play className={`w-3 h-3 fill-current ${isPlaying ? 'rotate-90' : ''}`} />
             {isPlaying ? 'Pause' : 'Play'}

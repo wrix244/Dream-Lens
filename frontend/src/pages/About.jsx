@@ -28,7 +28,7 @@ export default function About() {
   ];
 
   return (
-    <div className="pt-20 pb-16 min-h-screen bg-[#0B0F19]">
+    <div className="pt-20 pb-16 min-h-screen">
       <SEO
         title="About Us | Velora HD"
         description="Learn about Velora HD — the premium wallpaper marketplace. Discover our mission to provide high-resolution verified 4K/8K wallpapers and secure downloads."
@@ -54,32 +54,13 @@ export default function About() {
           </span>
           <h1 className="font-display font-black text-4xl md:text-5xl text-white leading-tight">
             Curating Digital Art <br />
-            <span className="text-transparent bg-clip-text bg-gradient-to-r from-primary to-accent">
+            <span className="text-primary">
               For Premium Screens
             </span>
           </h1>
           <p className="text-sm md:text-base text-gray-400 leading-relaxed max-w-2xl">
             VeloraHD started with a simple problem: wallpaper search websites are often cluttered, slow, low-quality, and packed with ads. We set out to build a minimalist gallery that functions as an art gallery rather than a database. 
           </p>
-        </div>
-
-        {/* Visual spacer / blurred preview */}
-        <div className="relative rounded-3xl overflow-hidden aspect-video border border-white/5 shadow-2xl bg-slate-900/40">
-          <img
-            src="/space-hero.webp"
-            alt="Velora HD Cosmos Concept"
-            className="w-full h-full object-cover opacity-50 blur-[2px]"
-          />
-          <div className="absolute inset-0 bg-gradient-to-t from-[#0B0F19] via-[#0B0F19]/40 to-transparent" />
-          <div className="absolute inset-0 flex items-center justify-center p-6 text-center">
-            <div className="space-y-2 max-w-lg">
-              <Camera className="w-8 h-8 text-accent mx-auto animate-pulse" />
-              <h3 className="font-display font-bold text-lg md:text-xl text-white">Curated for Aesthetics</h3>
-              <p className="text-[11px] text-gray-300">
-                "A desktop wallpaper is the digital frame of your workspaces. It sets the focus, the mood, and the ambient environment of your daily life."
-              </p>
-            </div>
-          </div>
         </div>
 
         {/* Trust pillars */}
@@ -93,7 +74,7 @@ export default function About() {
             {pillars.map((pillar, idx) => (
               <div
                 key={pillar.title}
-                className="p-6 rounded-2xl glass-panel hover:border-primary/20 transition-all duration-300 space-y-3"
+                className="p-6 rounded-2xl card space-y-3"
               >
                 <div className="p-3 bg-white/5 w-fit rounded-xl">
                   {pillar.icon}
@@ -110,7 +91,7 @@ export default function About() {
         </div>
 
         {/* Call to action */}
-        <div className="rounded-3xl glass-panel-glow p-8 text-center space-y-4 border border-white/5">
+        <div className="rounded-3xl card p-8 text-center space-y-4">
           <h2 className="font-display font-bold text-xl text-white">Ready to Explore?</h2>
           <p className="text-xs text-gray-400 max-w-md mx-auto leading-relaxed">
             Browse our curated grids of premium vertical and horizontal static designs, plus high quality loopable motion live wallpapers.
@@ -118,7 +99,7 @@ export default function About() {
           <div className="pt-2">
             <Link
               to="/explore"
-              className="px-8 py-3 rounded-xl bg-primary hover:bg-primary/95 text-white font-bold text-xs tracking-wider uppercase inline-flex items-center gap-1.5 transition-all shadow-xl hover:shadow-primary/20 cursor-pointer"
+              className="px-8 py-3 rounded-xl bg-primary hover:bg-primary/95 text-white font-bold text-xs tracking-wider uppercase inline-flex items-center gap-1.5 transition-all cursor-pointer"
             >
               Browse The Collection
             </Link>
