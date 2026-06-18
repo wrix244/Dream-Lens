@@ -559,6 +559,12 @@ export default function Details() {
                   {wallpaper.resolution}
                 </div>
               </div>
+
+              {/* Secure Trust Badge */}
+              <div className="pt-3 flex items-center justify-center gap-1.5 text-[10px] text-text-muted border-t border-border/80">
+                <Shield className="w-3.5 h-3.5 text-emerald-500 fill-emerald-500/10" />
+                <span>Verified Safe: Direct cloud media download • Malware-free</span>
+              </div>
             </div>
           </div>
 
