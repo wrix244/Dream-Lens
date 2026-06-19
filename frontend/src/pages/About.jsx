@@ -132,7 +132,7 @@ export default function About() {
           <div className="pt-3 border-t border-border/40 max-w-md mx-auto space-y-1">
             <p className="text-[11px] text-text-muted">Questions, feedback, or business inquiries?</p>
             <p className="text-xs font-semibold text-white">
-              Contact us at <a href="mailto:hello@velorahd.in" className="text-primary hover:underline">hello@velorahd.in</a>
+              Contact us at <a href="mailto:email@velorahd.in" className="text-primary hover:underline">email@velorahd.in</a>
             </p>
           </div>
           <div className="pt-2 flex flex-col sm:flex-row justify-center gap-3">

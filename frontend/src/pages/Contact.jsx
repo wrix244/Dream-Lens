@@ -117,7 +117,7 @@ export default function Contact() {
         >
           <span className="text-[10px] font-bold text-primary tracking-widest uppercase">Email Us</span>
           <h2 className="font-display font-black text-2xl sm:text-3xl text-white">
-            <a href="mailto:hello@velorahd.in" className="hover:text-primary transition-colors">hello@velorahd.in</a>
+            <a href="mailto:email@velorahd.in" className="hover:text-primary transition-colors">email@velorahd.in</a>
           </h2>
           <p className="text-xs text-text-muted">
             We typically respond within 24–48 hours.

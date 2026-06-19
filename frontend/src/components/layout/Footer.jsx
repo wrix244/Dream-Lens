@@ -39,10 +39,10 @@ export default function Footer() {
                 Premium digital art and wallpapers.
               </p>
               <a 
-                href="mailto:hello@velorahd.in" 
+                href="mailto:email@velorahd.in" 
                 className="text-primary hover:underline font-semibold block text-[11px]"
               >
-                hello@velorahd.in
+                email@velorahd.in
               </a>
             </div>
           </div>
