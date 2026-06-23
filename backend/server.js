@@ -17,6 +17,8 @@ import purchaseRoutes from './routes/purchaseRoutes.js';
 import adminRoutes from './routes/adminRoutes.js';
 import statsRoutes from './routes/statsRoutes.js';
 import contactRoutes from './routes/contactRoutes.js';
+import creatorRoutes from './routes/creatorRoutes.js';
+import notificationRoutes from './routes/notificationRoutes.js';
 import sitemapRoutes from './routes/sitemapRoutes.js';
 import categoryRoutes from './routes/categoryRoutes.js';
 
@@ -68,6 +70,8 @@ app.use('/api/purchases', purchaseRoutes);
 app.use('/api/admin', adminRoutes);
 app.use('/api/stats', statsRoutes);
 app.use('/api/contact', contactRoutes);
+app.use('/api/creator', creatorRoutes);
+app.use('/api/notifications', notificationRoutes);
 app.use('/api/categories', categoryRoutes);
 
 // Health Check Route
