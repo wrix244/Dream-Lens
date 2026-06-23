@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
 import { Upload, Check, AlertTriangle, ShieldCheck, Mail, Globe, User, Clock, ArrowRight, FileImage, LayoutDashboard } from 'lucide-react';
+import { motion, AnimatePresence } from 'framer-motion';
 import { useBecomeCreator, useCreatorApplicationStatus, useCancelCreatorApplication } from '../hooks/useCreator';
 import useAuthStore from '../store/authStore';
 import useUIStore from '../store/uiStore';
@@ -19,6 +20,15 @@ export default function BecomeCreator() {
   const [email, setEmail] = useState('');
   const [portfolioLink, setPortfolioLink] = useState('');
   const [files, setFiles] = useState([]);
+  const [showCancelModal, setShowCancelModal] = useState(false);
+
+  const handleCancelConfirm = () => {
+    cancelCreatorApplicationMutation.mutate(undefined, {
+      onSuccess: () => {
+        setShowCancelModal(false);
+      }
+    });
+  };
   
   // Checkbox States
   const [areOwnWallpapers, setAreOwnWallpapers] = useState(false);
@@ -175,53 +185,105 @@ export default function BecomeCreator() {
   // Pending Status View
   if (appStatus && appStatus.status === 'pending') {
     return (
-      <div className="pt-28 pb-20 max-w-2xl mx-auto px-4 min-h-[85vh] flex flex-col justify-center">
-        <div className="glass-panel p-8 sm:p-10 rounded-3xl border-white/5 space-y-6 text-center">
-          <div className="w-16 h-16 rounded-full bg-amber-500/10 border border-amber-500/20 flex items-center justify-center text-amber-400 mx-auto animate-pulse">
-            <Clock className="w-8 h-8" />
-          </div>
-          <div className="space-y-2">
-            <span className="text-[10px] font-bold text-amber-400 uppercase tracking-widest bg-amber-500/10 px-3 py-1 rounded-full border border-amber-500/20">
-              Application Status: Pending
-            </span>
-            <h2 className="text-2xl sm:text-3xl font-display font-black text-white mt-4">We are reviewing your request</h2>
-            <p className="text-gray-400 text-sm max-w-md mx-auto">
-              Thank you for applying! Our moderation team is currently reviewing your uploaded wallpapers. We will send an email update to <span className="text-primary font-semibold">{appStatus.email}</span> once a decision is made.
-            </p>
-            <div className="pt-4">
-              <button
-                onClick={() => {
-                  if (window.confirm('Are you sure you want to cancel and delete your creator application? This will retract your submission.')) {
-                    cancelCreatorApplicationMutation.mutate();
-                  }
-                }}
-                disabled={cancelCreatorApplicationMutation.isPending}
-                className="px-6 py-2.5 bg-rose-500/10 hover:bg-rose-500/20 border border-rose-500/20 text-rose-400 text-xs font-bold uppercase tracking-wider rounded-xl transition cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed"
-              >
-                {cancelCreatorApplicationMutation.isPending ? 'Canceling...' : 'Cancel Application'}
-              </button>
+      <>
+        <div className="pt-28 pb-20 max-w-2xl mx-auto px-4 min-h-[85vh] flex flex-col justify-center">
+          <div className="glass-panel p-8 sm:p-10 rounded-3xl border-white/5 space-y-6 text-center">
+            <div className="w-16 h-16 rounded-full bg-amber-500/10 border border-amber-500/20 flex items-center justify-center text-amber-400 mx-auto animate-pulse">
+              <Clock className="w-8 h-8" />
             </div>
-          </div>
-          
-          <div className="border-t border-white/5 pt-6 text-left space-y-4">
-            <h4 className="text-xs font-bold text-gray-400 uppercase tracking-wide">Submitted Artworks:</h4>
-            <div className="grid grid-cols-3 gap-4">
-              {appStatus.wallpapers?.map((url, idx) => {
-                const isVideo = url?.includes('/video/') || url?.endsWith('.mp4') || url?.endsWith('.webm');
-                return (
-                  <div key={idx} className="relative aspect-square rounded-xl overflow-hidden border border-white/5 group">
-                    {isVideo ? (
-                      <video src={url} className="w-full h-full object-cover transition-transform group-hover:scale-110" muted playsInline />
-                    ) : (
-                      <img src={url} alt={`Submission ${idx + 1}`} className="w-full h-full object-cover transition-transform group-hover:scale-110" />
-                    )}
-                  </div>
-                );
-              })}
+            <div className="space-y-2">
+              <span className="text-[10px] font-bold text-amber-400 uppercase tracking-widest bg-amber-500/10 px-3 py-1 rounded-full border border-amber-500/20">
+                Application Status: Pending
+              </span>
+              <h2 className="text-2xl sm:text-3xl font-display font-black text-white mt-4">We are reviewing your request</h2>
+              <p className="text-gray-400 text-sm max-w-md mx-auto">
+                Thank you for applying! Our moderation team is currently reviewing your uploaded wallpapers. We will send an email update to <span className="text-primary font-semibold">{appStatus.email}</span> once a decision is made.
+              </p>
+              <div className="pt-4">
+                <button
+                  onClick={() => setShowCancelModal(true)}
+                  className="px-6 py-2.5 bg-rose-500/10 hover:bg-rose-500/20 border border-rose-500/20 text-rose-400 text-xs font-bold uppercase tracking-wider rounded-xl transition cursor-pointer"
+                >
+                  Cancel Application
+                </button>
+              </div>
+            </div>
+            
+            <div className="border-t border-white/5 pt-6 text-left space-y-4">
+              <h4 className="text-xs font-bold text-gray-400 uppercase tracking-wide">Submitted Artworks:</h4>
+              <div className="grid grid-cols-3 gap-4">
+                {appStatus.wallpapers?.map((url, idx) => {
+                  const isVideo = url?.includes('/video/') || url?.endsWith('.mp4') || url?.endsWith('.webm');
+                  return (
+                    <div key={idx} className="relative aspect-square rounded-xl overflow-hidden border border-white/5 group">
+                      {isVideo ? (
+                        <video src={url} className="w-full h-full object-cover transition-transform group-hover:scale-110" muted playsInline />
+                      ) : (
+                        <img src={url} alt={`Submission ${idx + 1}`} className="w-full h-full object-cover transition-transform group-hover:scale-110" />
+                      )}
+                    </div>
+                  );
+                })}
+              </div>
             </div>
           </div>
         </div>
-      </div>
+
+        {/* Custom Animated Retract Modal */}
+        <AnimatePresence>
+          {showCancelModal && (
+            <motion.div
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
+              className="fixed inset-0 bg-black/80 backdrop-blur-xs z-50 flex items-center justify-center p-4"
+            >
+              <motion.div
+                initial={{ scale: 0.95, y: 10 }}
+                animate={{ scale: 1, y: 0 }}
+                exit={{ scale: 0.95, y: 10 }}
+                transition={{ type: 'spring', duration: 0.4 }}
+                className="bg-[#0f121d] border border-white/5 p-6 rounded-3xl max-w-sm w-full space-y-6 text-center shadow-2xl relative"
+              >
+                <div className="w-12 h-12 rounded-2xl bg-rose-500/10 border border-rose-500/20 flex items-center justify-center text-rose-400 mx-auto">
+                  <AlertTriangle className="w-6 h-6" />
+                </div>
+                
+                <div className="space-y-2">
+                  <h3 className="text-lg font-display font-bold text-white">Retract Application?</h3>
+                  <p className="text-gray-400 text-xs leading-relaxed">
+                    Are you sure you want to cancel and delete your creator application? This will permanently delete your uploaded samples and retract your request.
+                  </p>
+                </div>
+                
+                <div className="flex justify-center gap-3">
+                  <button
+                    onClick={() => setShowCancelModal(false)}
+                    disabled={cancelCreatorApplicationMutation.isPending}
+                    className="px-5 py-2.5 rounded-xl border border-white/10 hover:bg-white/5 text-gray-300 text-xs font-bold transition-colors cursor-pointer disabled:opacity-50"
+                  >
+                    No, Keep It
+                  </button>
+                  <button
+                    onClick={handleCancelConfirm}
+                    disabled={cancelCreatorApplicationMutation.isPending}
+                    className="px-5 py-2.5 rounded-xl bg-rose-500 hover:bg-rose-600 text-white text-xs font-bold transition-colors cursor-pointer flex items-center justify-center gap-1.5 disabled:opacity-50"
+                  >
+                    {cancelCreatorApplicationMutation.isPending ? (
+                      <>
+                        <div className="w-3.5 h-3.5 border-2 border-white border-t-transparent rounded-full animate-spin" />
+                        <span>Retracting...</span>
+                      </>
+                    ) : (
+                      'Yes, Retract'
+                    )}
+                  </button>
+                </div>
+              </motion.div>
+            </motion.div>
+          )}
+        </AnimatePresence>
+      </>
     );
   }
 
