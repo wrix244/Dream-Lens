@@ -52,8 +52,7 @@ export default function Navbar() {
     ...(!isAuthenticated
       ? [{ name: 'Become a Creator', path: '/become-creator', icon: <Sparkles className="w-3.5 h-3.5" /> }]
       : []),
-    ...(!isInstalled ? [{ name: 'Add to Home Screen', onClick: handlePWAInstall, icon: <Download className="w-3.5 h-3.5" /> }] : []),
-    ...(!isInstalled ? [{ name: 'App', onClick: handlePWAInstall, icon: <Download className="w-3.5 h-3.5" /> }] : []),
+    ...(!isInstalled ? [{ name: 'Install App', onClick: handlePWAInstall, icon: <Download className="w-3.5 h-3.5" /> }] : []),
   ];
 
   return (

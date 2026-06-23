@@ -121,27 +121,27 @@ export default function BecomeCreator() {
   if (!isAuthenticated) {
     return (
       <div className="pt-28 pb-20 max-w-4xl mx-auto px-4 text-center min-h-[80vh] flex flex-col justify-center items-center space-y-8">
-        <div className="w-20 h-20 rounded-3xl bg-gradient-to-tr from-primary to-accent flex items-center justify-center shadow-2xl shadow-primary/20">
-          <ShieldCheck className="w-10 h-10 text-white" />
+        <div className="w-20 h-20 rounded-3xl bg-primary flex items-center justify-center shadow-2xl">
+          <ShieldCheck className="w-10 h-10 text-black" />
         </div>
         <div className="space-y-3">
           <h1 className="text-4xl md:text-5xl font-display font-black text-white leading-tight">
-            Share Art. <span className="text-transparent bg-clip-text bg-gradient-to-r from-primary via-secondary to-accent">Get Recognized.</span>
+            Share Art. <span className="text-primary">Get Recognized.</span>
           </h1>
-          <p className="text-gray-400 text-base max-w-lg mx-auto">
+          <p className="text-text-muted text-base max-w-lg mx-auto">
             Become a creator on VeloraHD. Showcase your unique wallpapers to millions of users worldwide and earn premium payouts.
           </p>
         </div>
-        <div className="flex gap-4">
+        <div className="flex flex-col sm:flex-row gap-3 w-full max-w-sm justify-center items-center">
           <Link
             to="/login?redirect=/become-creator"
-            className="px-8 py-3.5 bg-primary hover:bg-primary-hover text-white text-sm font-semibold rounded-2xl shadow-lg transition btn-glow flex items-center gap-2"
+            className="w-full sm:w-auto px-6 py-3.5 bg-primary hover:bg-primary/90 text-white text-sm font-semibold rounded-2xl shadow-lg transition flex items-center justify-center gap-2"
           >
             Sign In to Apply <ArrowRight className="w-4 h-4" />
           </Link>
           <Link
             to="/register?redirect=/become-creator"
-            className="px-8 py-3.5 bg-white/5 hover:bg-white/10 border border-white/10 text-white text-sm font-semibold rounded-2xl transition"
+            className="w-full sm:w-auto px-6 py-3.5 bg-surface-2 hover:bg-surface-2/80 border border-border text-white text-sm font-semibold rounded-2xl transition text-center"
           >
             Create an Account
           </Link>
@@ -187,7 +187,7 @@ export default function BecomeCreator() {
     return (
       <>
         <div className="pt-28 pb-20 max-w-2xl mx-auto px-4 min-h-[85vh] flex flex-col justify-center">
-          <div className="glass-panel p-8 sm:p-10 rounded-3xl border-white/5 space-y-6 text-center">
+          <div className="card p-8 sm:p-10 rounded-3xl space-y-6 text-center">
             <div className="w-16 h-16 rounded-full bg-amber-500/10 border border-amber-500/20 flex items-center justify-center text-amber-400 mx-auto animate-pulse">
               <Clock className="w-8 h-8" />
             </div>
@@ -196,7 +196,7 @@ export default function BecomeCreator() {
                 Application Status: Pending
               </span>
               <h2 className="text-2xl sm:text-3xl font-display font-black text-white mt-4">We are reviewing your request</h2>
-              <p className="text-gray-400 text-sm max-w-md mx-auto">
+              <p className="text-text-muted text-sm max-w-md mx-auto">
                 Thank you for applying! Our moderation team is currently reviewing your uploaded wallpapers. We will send an email update to <span className="text-primary font-semibold">{appStatus.email}</span> once a decision is made.
               </p>
               <div className="pt-4">
@@ -209,13 +209,13 @@ export default function BecomeCreator() {
               </div>
             </div>
             
-            <div className="border-t border-white/5 pt-6 text-left space-y-4">
-              <h4 className="text-xs font-bold text-gray-400 uppercase tracking-wide">Submitted Artworks:</h4>
+            <div className="border-t border-border pt-6 text-left space-y-4">
+              <h4 className="text-xs font-bold text-text-muted uppercase tracking-wide">Submitted Artworks:</h4>
               <div className="grid grid-cols-3 gap-4">
                 {appStatus.wallpapers?.map((url, idx) => {
                   const isVideo = url?.includes('/video/') || url?.endsWith('.mp4') || url?.endsWith('.webm');
                   return (
-                    <div key={idx} className="relative aspect-square rounded-xl overflow-hidden border border-white/5 group">
+                    <div key={idx} className="relative aspect-square rounded-xl overflow-hidden border border-border group">
                       {isVideo ? (
                         <video src={url} className="w-full h-full object-cover transition-transform group-hover:scale-110" muted playsInline />
                       ) : (
@@ -243,7 +243,7 @@ export default function BecomeCreator() {
                 animate={{ scale: 1, y: 0 }}
                 exit={{ scale: 0.95, y: 10 }}
                 transition={{ type: 'spring', duration: 0.4 }}
-                className="bg-[#0f121d] border border-white/5 p-6 rounded-3xl max-w-sm w-full space-y-6 text-center shadow-2xl relative"
+                className="bg-surface border border-border p-6 rounded-3xl max-w-sm w-full space-y-6 text-center shadow-2xl relative"
               >
                 <div className="w-12 h-12 rounded-2xl bg-rose-500/10 border border-rose-500/20 flex items-center justify-center text-rose-400 mx-auto">
                   <AlertTriangle className="w-6 h-6" />
@@ -251,7 +251,7 @@ export default function BecomeCreator() {
                 
                 <div className="space-y-2">
                   <h3 className="text-lg font-display font-bold text-white">Retract Application?</h3>
-                  <p className="text-gray-400 text-xs leading-relaxed">
+                  <p className="text-text-muted text-xs leading-relaxed">
                     Are you sure you want to cancel and delete your creator application? This will permanently delete your uploaded samples and retract your request.
                   </p>
                 </div>
@@ -260,7 +260,7 @@ export default function BecomeCreator() {
                   <button
                     onClick={() => setShowCancelModal(false)}
                     disabled={cancelCreatorApplicationMutation.isPending}
-                    className="px-5 py-2.5 rounded-xl border border-white/10 hover:bg-white/5 text-gray-300 text-xs font-bold transition-colors cursor-pointer disabled:opacity-50"
+                    className="px-5 py-2.5 rounded-xl border border-border hover:bg-surface-2 text-text-light text-xs font-bold transition-colors cursor-pointer disabled:opacity-50"
                   >
                     No, Keep It
                   </button>
@@ -292,7 +292,7 @@ export default function BecomeCreator() {
   if (appStatus && appStatus.status === 'rejected' && cooldownDays && cooldownDays > 0) {
     return (
       <div className="pt-28 pb-20 max-w-2xl mx-auto px-4 min-h-[85vh] flex flex-col justify-center">
-        <div className="glass-panel p-8 sm:p-10 rounded-3xl border-rose-500/10 space-y-6 text-center relative overflow-hidden">
+        <div className="card p-8 sm:p-10 rounded-3xl space-y-6 text-center relative overflow-hidden">
           <div className="absolute top-0 inset-x-0 h-1 bg-rose-500" />
           <div className="w-16 h-16 rounded-full bg-rose-500/10 border border-rose-500/20 flex items-center justify-center text-rose-400 mx-auto">
             <AlertTriangle className="w-8 h-8" />
@@ -302,19 +302,19 @@ export default function BecomeCreator() {
               Application Status: Rejected
             </span>
             <h2 className="text-2xl sm:text-3xl font-display font-black text-white mt-4">Application Not Approved</h2>
-            <p className="text-gray-400 text-sm max-w-md mx-auto">
+            <p className="text-text-muted text-sm max-w-md mx-auto">
               Our review team carefully checked your request, and unfortunately, it does not meet our guidelines at this time.
             </p>
           </div>
 
           {appStatus.rejectionNotes && (
-            <div className="p-4 bg-white/5 border border-white/5 rounded-2xl text-left max-w-md mx-auto">
-              <p className="text-[11px] font-bold text-gray-400 uppercase tracking-wide">Reviewer Feedback:</p>
+            <div className="p-4 bg-surface-2 border border-border rounded-2xl text-left max-w-md mx-auto">
+              <p className="text-[11px] font-bold text-text-muted uppercase tracking-wide">Reviewer Feedback:</p>
               <p className="text-xs text-rose-200 mt-1 italic font-medium">"{appStatus.rejectionNotes}"</p>
             </div>
           )}
 
-          <div className="border-t border-white/5 pt-6 max-w-md mx-auto flex items-center justify-center gap-2.5 text-xs text-gray-400">
+          <div className="border-t border-border pt-6 max-w-md mx-auto flex items-center justify-center gap-2.5 text-xs text-text-muted">
             <Clock className="w-4 h-4 text-primary" />
             <span>You can reapply in <strong className="text-white">{cooldownDays} days</strong> (cooldown until {new Date(user?.cooldownUntil).toLocaleDateString()}).</span>
           </div>
@@ -328,19 +328,19 @@ export default function BecomeCreator() {
     <div className="pt-28 pb-20 max-w-3xl mx-auto px-4 min-h-screen">
       <div className="space-y-2 text-center mb-8">
         <h1 className="text-3xl sm:text-5xl font-display font-black text-white">
-          Become a <span className="text-transparent bg-clip-text bg-gradient-to-r from-primary to-accent">Creator</span>
+          Become a <span className="text-primary">Creator</span>
         </h1>
-        <p className="text-gray-400 text-sm max-w-md mx-auto">
+        <p className="text-text-muted text-sm max-w-md mx-auto">
           Share your high-quality wallpapers with our community. Upload sample works and fill in the details below.
         </p>
       </div>
 
-      <form onSubmit={handleSubmit} className="glass-panel rounded-3xl p-6 sm:p-10 border-white/5 space-y-8">
+      <form onSubmit={handleSubmit} className="card rounded-3xl p-6 sm:p-10 space-y-8">
         
         {/* Name & Email */}
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
           <div className="space-y-2">
-            <label className="text-xs font-bold text-gray-400 uppercase tracking-wider flex items-center gap-1.5">
+            <label className="text-xs font-bold text-text-muted uppercase tracking-wider flex items-center gap-1.5">
               <User className="w-3.5 h-3.5 text-primary" /> Full Name <span className="text-rose-500">*</span>
             </label>
             <input
@@ -349,12 +349,12 @@ export default function BecomeCreator() {
               placeholder="e.g. Jane Doe"
               value={fullName}
               onChange={(e) => setFullName(e.target.value)}
-              className="w-full px-4 py-3 rounded-xl bg-white/5 border border-white/10 text-white text-sm focus:border-primary focus:outline-none transition-colors"
+              className="w-full px-4 py-3 clean-input"
             />
           </div>
 
           <div className="space-y-2">
-            <label className="text-xs font-bold text-gray-400 uppercase tracking-wider flex items-center gap-1.5">
+            <label className="text-xs font-bold text-text-muted uppercase tracking-wider flex items-center gap-1.5">
               <Mail className="w-3.5 h-3.5 text-primary" /> Email Address <span className="text-rose-500">*</span>
             </label>
             <input
@@ -363,14 +363,14 @@ export default function BecomeCreator() {
               placeholder="e.g. jane@domain.com"
               value={email}
               onChange={(e) => setEmail(e.target.value)}
-              className="w-full px-4 py-3 rounded-xl bg-white/5 border border-white/10 text-white text-sm focus:border-primary focus:outline-none transition-colors"
+              className="w-full px-4 py-3 clean-input"
             />
           </div>
         </div>
 
         {/* Portfolio */}
         <div className="space-y-2">
-          <label className="text-xs font-bold text-gray-400 uppercase tracking-wider flex items-center gap-1.5">
+          <label className="text-xs font-bold text-text-muted uppercase tracking-wider flex items-center gap-1.5">
             <Globe className="w-3.5 h-3.5 text-primary" /> Portfolio Link <span className="text-gray-500">(Optional)</span>
           </label>
           <input
@@ -378,17 +378,17 @@ export default function BecomeCreator() {
             placeholder="e.g. https://behance.net/username"
             value={portfolioLink}
             onChange={(e) => setPortfolioLink(e.target.value)}
-            className="w-full px-4 py-3 rounded-xl bg-white/5 border border-white/10 text-white text-sm focus:border-primary focus:outline-none transition-colors"
+            className="w-full px-4 py-3 clean-input"
           />
         </div>
 
         {/* File upload */}
         <div className="space-y-3">
-          <label className="text-xs font-bold text-gray-400 uppercase tracking-wider flex items-center gap-1.5">
+          <label className="text-xs font-bold text-text-muted uppercase tracking-wider flex items-center gap-1.5">
             <FileImage className="w-3.5 h-3.5 text-primary" /> Upload 3–5 Wallpaper Files <span className="text-rose-500">*</span>
           </label>
 
-          <div className="relative border-2 border-dashed border-white/10 hover:border-primary/40 rounded-2xl p-8 text-center transition-all bg-white/2 cursor-pointer group">
+          <div className="relative border border-dashed border-border hover:border-gray-500 rounded-2xl p-8 text-center transition-all bg-surface cursor-pointer group">
             <input
               type="file"
               multiple
@@ -396,18 +396,18 @@ export default function BecomeCreator() {
               onChange={handleFileChange}
               className="absolute inset-0 opacity-0 cursor-pointer w-full h-full"
             />
-            <Upload className="w-8 h-8 text-gray-500 group-hover:text-primary transition-colors mx-auto mb-3" />
+            <Upload className="w-8 h-8 text-text-muted group-hover:text-white transition-colors mx-auto mb-3" />
             <p className="text-xs font-bold text-white">Click or Drag & Drop to upload images or videos</p>
-            <p className="text-[10px] text-gray-500 mt-1">PNG, JPG, WEBP, MP4, WEBM formats up to 10MB each</p>
+            <p className="text-[10px] text-text-muted mt-1">PNG, JPG, WEBP, MP4, WEBM formats up to 10MB each</p>
           </div>
 
           {/* Uploaded File Previews */}
           {files.length > 0 && (
             <div className="space-y-2">
-              <p className="text-[10px] font-bold text-gray-500 uppercase tracking-wider mt-4">Selected Files ({files.length}/5):</p>
+              <p className="text-[10px] font-bold text-text-muted uppercase tracking-wider mt-4">Selected Files ({files.length}/5):</p>
               <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-3">
                 {files.map((file, idx) => (
-                  <div key={idx} className="flex items-center justify-between p-2.5 bg-white/5 border border-white/5 rounded-xl text-xs">
+                  <div key={idx} className="flex items-center justify-between p-2.5 bg-surface-2 border border-border rounded-xl text-xs">
                     <div className="flex items-center gap-2 truncate pr-2">
                       <Check className="w-3.5 h-3.5 text-emerald-400 shrink-0" />
                       <span className="truncate text-white font-medium">{file.name}</span>
@@ -415,7 +415,7 @@ export default function BecomeCreator() {
                     <button
                       type="button"
                       onClick={() => removeFile(idx)}
-                      className="text-rose-400 hover:text-rose-300 font-bold px-1.5 py-0.5 rounded hover:bg-white/5 transition-colors cursor-pointer"
+                      className="text-rose-400 hover:text-rose-300 font-bold px-1.5 py-0.5 rounded hover:bg-surface transition-colors cursor-pointer"
                     >
                       Remove
                     </button>
@@ -433,17 +433,17 @@ export default function BecomeCreator() {
         </div>
 
         {/* Declarations */}
-        <div className="border-t border-white/5 pt-6 space-y-4">
-          <h3 className="text-xs font-bold text-gray-400 uppercase tracking-wider mb-2">Artistic Declarations</h3>
+        <div className="border-t border-border pt-6 space-y-4">
+          <h3 className="text-xs font-bold text-text-muted uppercase tracking-wider mb-2">Artistic Declarations</h3>
 
           <label className="flex items-start gap-3 cursor-pointer group">
             <input
               type="checkbox"
               checked={areOwnWallpapers}
               onChange={(e) => setAreOwnWallpapers(e.target.checked)}
-              className="mt-0.5 rounded border-white/10 text-primary focus:ring-primary focus:ring-offset-[#121212] bg-white/5"
+              className="mt-0.5 rounded border-border text-primary focus:ring-primary focus:ring-offset-bg-dark bg-surface"
             />
-            <span className="text-xs text-gray-400 group-hover:text-white transition-colors">
+            <span className="text-xs text-text-muted group-hover:text-white transition-colors">
               Are these wallpapers 100% created by you? <span className="text-rose-500">*</span>
             </span>
           </label>
@@ -453,9 +453,9 @@ export default function BecomeCreator() {
               type="checkbox"
               checked={ownRights}
               onChange={(e) => setOwnRights(e.target.checked)}
-              className="mt-0.5 rounded border-white/10 text-primary focus:ring-primary focus:ring-offset-[#121212] bg-white/5"
+              className="mt-0.5 rounded border-border text-primary focus:ring-primary focus:ring-offset-bg-dark bg-surface"
             />
-            <span className="text-xs text-gray-400 group-hover:text-white transition-colors">
+            <span className="text-xs text-text-muted group-hover:text-white transition-colors">
               Do you own the rights to upload these wallpapers? <span className="text-rose-500">*</span>
             </span>
           </label>
@@ -465,22 +465,22 @@ export default function BecomeCreator() {
               type="checkbox"
               checked={soldElsewhere}
               onChange={(e) => setSoldElsewhere(e.target.checked)}
-              className="mt-0.5 rounded border-white/10 text-primary focus:ring-primary focus:ring-offset-[#121212] bg-white/5"
+              className="mt-0.5 rounded border-border text-primary focus:ring-primary focus:ring-offset-bg-dark bg-surface"
             />
-            <span className="text-xs text-gray-400 group-hover:text-white transition-colors">
+            <span className="text-xs text-text-muted group-hover:text-white transition-colors">
               Have you sold or published them elsewhere? <span className="text-gray-500">(Disclosure only)</span>
             </span>
           </label>
 
-          <div className="p-4 bg-primary/5 border border-primary/10 rounded-2xl mt-4">
+          <div className="p-4 bg-surface-2 border border-border rounded-2xl mt-4">
             <label className="flex items-start gap-3 cursor-pointer group">
               <input
                 type="checkbox"
                 checked={copyrightConfirmed}
                 onChange={(e) => setCopyrightConfirmed(e.target.checked)}
-                className="mt-0.5 rounded border-white/10 text-primary focus:ring-primary focus:ring-offset-[#121212] bg-white/5"
+                className="mt-0.5 rounded border-border text-primary focus:ring-primary focus:ring-offset-bg-dark bg-surface"
               />
-              <span className="text-xs text-gray-300 font-medium group-hover:text-white transition-colors">
+              <span className="text-xs text-text-light font-medium group-hover:text-white transition-colors">
                 I confirm that I own or have the legal rights to upload these artworks. Copyright violations may result in account suspension. <span className="text-rose-500">*</span>
               </span>
             </label>
@@ -493,8 +493,8 @@ export default function BecomeCreator() {
           disabled={!isFormValid || becomeCreatorMutation.isPending}
           className={`w-full py-4 rounded-2xl text-xs font-bold uppercase tracking-widest text-center transition-all ${
             isFormValid && !becomeCreatorMutation.isPending
-              ? 'bg-primary hover:bg-primary-hover text-white shadow-lg shadow-primary/20 btn-glow cursor-pointer'
-              : 'bg-white/5 text-gray-500 cursor-not-allowed border border-white/5'
+              ? 'bg-primary hover:bg-primary/95 text-white shadow-lg shadow-primary/20 cursor-pointer'
+              : 'bg-surface-2 text-gray-500 cursor-not-allowed border border-border'
           }`}
         >
           {becomeCreatorMutation.isPending ? (

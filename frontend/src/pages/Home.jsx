@@ -144,13 +144,13 @@ export default function Home() {
                 className="w-full h-full object-cover group-hover:scale-102 transition-transform duration-700"
               />
               <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent" />
-              <div className="absolute bottom-6 left-6 right-6 flex justify-between items-end">
+              <div className="absolute bottom-4 left-4 right-4 sm:bottom-6 sm:left-6 sm:right-6 flex flex-col sm:flex-row justify-between items-start sm:items-end gap-3">
                 <div className="space-y-1">
                   <span className="text-[9px] font-bold tracking-widest uppercase text-primary">Daily Selection</span>
-                  <h2 className="font-display font-bold text-lg sm:text-xl text-white">{dailySpotlight.title}</h2>
+                  <h2 className="font-display font-bold text-base sm:text-xl text-white">{dailySpotlight.title}</h2>
                   <p className="text-[10px] text-text-muted">{dailySpotlight.category} • {dailySpotlight.resolution}</p>
                 </div>
-                <div className="px-3 py-1.5 rounded-lg bg-white text-black font-semibold text-[10px] tracking-wider uppercase flex items-center gap-1">
+                <div className="px-3 py-1.5 rounded-lg bg-white text-black font-semibold text-[10px] tracking-wider uppercase flex items-center gap-1 self-start sm:self-auto flex-shrink-0">
                   View Space <ArrowRight className="w-3.5 h-3.5" />
                 </div>
               </div>

@@ -27,11 +27,11 @@ export default function InstallPrompt() {
         transition={{ type: 'spring', stiffness: 300, damping: 30 }}
         className="fixed bottom-6 left-4 right-4 md:left-auto md:right-6 md:w-[380px] z-50"
       >
-        <div className="glass-panel-glow rounded-2xl p-5 border border-white/10 shadow-2xl">
+        <div className="card rounded-2xl p-5 shadow-2xl">
           {/* Close button */}
           <button
             onClick={handleDismiss}
-            className="absolute top-3 right-3 p-1 rounded-full text-gray-500 hover:text-white hover:bg-white/10 transition"
+            className="absolute top-3 right-3 p-1 rounded-full text-gray-500 hover:text-white hover:bg-surface-2 transition"
           >
             <X className="w-4 h-4" />
           </button>
@@ -61,7 +61,7 @@ export default function InstallPrompt() {
                 </button>
                 <button
                   onClick={handleDismiss}
-                  className="px-3 py-2 rounded-xl text-xs font-semibold text-gray-400 hover:text-white hover:bg-white/5 transition"
+                  className="px-3 py-2 rounded-xl text-xs font-semibold text-gray-400 hover:text-white hover:bg-surface-2 transition"
                 >
                   Not now
                 </button>
@@ -70,7 +70,7 @@ export default function InstallPrompt() {
           </div>
 
           {/* Subtle feature chips */}
-          <div className="flex items-center gap-2 mt-3 pt-3 border-t border-white/5">
+          <div className="flex items-center gap-2 mt-3 pt-3 border-t border-border">
             <span className="text-[10px] text-gray-500 flex items-center gap-1">
               <Smartphone className="w-3 h-3" /> Works offline
             </span>
