@@ -13,7 +13,7 @@ export const sendContactEmail = async (req, res) => {
     }
 
     const resendApiKey = process.env.RESEND_API_KEY;
-    const receiverEmail = process.env.CONTACT_RECEIVER_EMAIL || 'velorahdwallart@gmail.com';
+    const receiverEmail = 'velorahdwallart@gmail.com';
 
     // If credentials are not configured
     if (!resendApiKey) {
@@ -93,7 +93,7 @@ export const sendDmcaEmail = async (req, res) => {
     }
 
     const resendApiKey = process.env.RESEND_API_KEY;
-    const receiverEmail = process.env.CONTACT_RECEIVER_EMAIL || 'velorahdwallart@gmail.com';
+    const receiverEmail = 'velorahdwallart@gmail.com';
 
     // If credentials are not configured
     if (!resendApiKey) {

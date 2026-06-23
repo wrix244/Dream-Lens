@@ -147,7 +147,7 @@ export const applyToBecomeCreator = async (req, res) => {
     });
 
     // 5. Send Email to receiver Gmail
-    const adminEmail = process.env.CONTACT_RECEIVER_EMAIL || 'velorahdwallart@gmail.com';
+    const adminEmail = 'velorahdwallart@gmail.com';
     const emailHtml = `
       <div style="font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; max-width: 650px; margin: 0 auto; padding: 25px; border: 1px solid #222; border-radius: 12px; background-color: #121212; color: #e0e0e0;">
         <div style="background-color: #6366f1; padding: 20px; border-top-left-radius: 12px; border-top-right-radius: 12px; color: #ffffff; text-align: center;">
