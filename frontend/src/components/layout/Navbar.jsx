@@ -55,7 +55,6 @@ export default function Navbar() {
     ...(!isAuthenticated || user?.role === 'user'
       ? [{ name: 'Become a Creator', path: '/become-creator', icon: <Sparkles className="w-3.5 h-3.5" /> }]
       : []),
-    ...(isAuthenticated ? [{ name: 'Stats Board', path: '/dashboard', icon: <Activity className="w-3.5 h-3.5" /> }] : []),
     ...(!isInstalled ? [{ name: 'Add to Home Screen', onClick: handlePWAInstall, icon: <Download className="w-3.5 h-3.5" /> }] : []),
     ...(isAuthenticated ? [{ name: 'Dashboard', path: '/dashboard', icon: <Activity className="w-3.5 h-3.5" /> }] : []),
     ...(!isInstalled ? [{ name: 'App', onClick: handlePWAInstall, icon: <Download className="w-3.5 h-3.5" /> }] : []),
