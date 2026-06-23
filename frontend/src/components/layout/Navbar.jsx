@@ -49,14 +49,10 @@ export default function Navbar() {
     { name: 'Mobile', path: '/explore?deviceType=mobile', icon: <Phone className="w-3.5 h-3.5" /> },
     { name: 'Live', path: '/explore?type=live', icon: <Film className="w-3.5 h-3.5" /> },
     { name: 'Premium', path: '/explore?isPremium=true', icon: <Sparkles className="w-3.5 h-3.5" /> },
-    ...(isAuthenticated && user?.role === 'creator'
-      ? [{ name: 'Creator Dashboard', path: '/creator-dashboard', icon: <LayoutDashboard className="w-3.5 h-3.5" /> }]
-      : []),
-    ...(!isAuthenticated || user?.role === 'user'
+    ...(!isAuthenticated
       ? [{ name: 'Become a Creator', path: '/become-creator', icon: <Sparkles className="w-3.5 h-3.5" /> }]
       : []),
     ...(!isInstalled ? [{ name: 'Add to Home Screen', onClick: handlePWAInstall, icon: <Download className="w-3.5 h-3.5" /> }] : []),
-    ...(isAuthenticated ? [{ name: 'Dashboard', path: '/dashboard', icon: <Activity className="w-3.5 h-3.5" /> }] : []),
     ...(!isInstalled ? [{ name: 'App', onClick: handlePWAInstall, icon: <Download className="w-3.5 h-3.5" /> }] : []),
   ];
 
@@ -186,6 +182,27 @@ export default function Navbar() {
                       <History className="w-4 h-4" />
                       Purchases
                     </Link>
+                    
+                    {/* Global Live Stats Dashboard */}
+                    <Link
+                      to="/dashboard"
+                      onClick={() => setDropdownOpen(false)}
+                      className="flex items-center gap-2 px-4 py-2 text-text-muted hover:text-white hover:bg-surface-2 border-t border-white/5 transition-colors"
+                    >
+                      <Activity className="w-4 h-4 text-secondary" />
+                      Live Stats
+                    </Link>
+                    
+                    {user?.role === 'user' && (
+                      <Link
+                        to="/become-creator"
+                        onClick={() => setDropdownOpen(false)}
+                        className="flex items-center gap-2 px-4 py-2 text-primary hover:text-primary-active hover:bg-primary/5 border-t border-white/5 transition-colors font-medium"
+                      >
+                        <Sparkles className="w-4 h-4" />
+                        Become a Creator
+                      </Link>
+                    )}
                     
                     {user?.role === 'creator' && (
                       <Link
@@ -337,11 +354,29 @@ export default function Navbar() {
                     <User className="w-4 h-4" />
                     My Profile
                   </Link>
+                  <Link
+                    to="/dashboard"
+                    onClick={() => setIsOpen(false)}
+                    className="flex items-center gap-2 text-xs text-text-muted hover:text-white py-1"
+                  >
+                    <Activity className="w-4 h-4 text-secondary" />
+                    Live Stats
+                  </Link>
+                  {user?.role === 'user' && (
+                    <Link
+                      to="/become-creator"
+                      onClick={() => setIsOpen(false)}
+                      className="flex items-center gap-2 text-xs text-primary hover:text-primary-active py-1 font-semibold"
+                    >
+                      <Sparkles className="w-4 h-4" />
+                      Become a Creator
+                    </Link>
+                  )}
                   {user?.role === 'creator' && (
                     <Link
                       to="/creator-dashboard"
                       onClick={() => setIsOpen(false)}
-                      className="flex items-center gap-2 px-3 py-2.5 rounded-xl text-sm text-primary hover:bg-primary/5 transition-colors font-semibold"
+                      className="flex items-center gap-2 text-xs text-primary hover:text-primary-active py-1 font-semibold"
                     >
                       <LayoutDashboard className="w-4 h-4" />
                       Creator Dashboard
