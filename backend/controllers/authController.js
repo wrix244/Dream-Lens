@@ -5,6 +5,7 @@ import mongoose from 'mongoose';
 import Favorite from '../models/Favorite.js';
 import Purchase from '../models/Purchase.js';
 import Download from '../models/Download.js';
+import { uploadToCloudinary } from '../config/cloudinary.js';
 
 const verifyGoogleToken = (idToken) => {
   return new Promise((resolve, reject) => {
@@ -180,6 +181,29 @@ export const updateUserProfile = async (req, res) => {
     } else {
       res.status(404).json({ success: false, message: 'User not found' });
     }
+  } catch (error) {
+    res.status(500).json({ success: false, message: error.message });
+  }
+};
+
+// @desc    Upload avatar image to Cloudinary
+// @route   POST /api/auth/profile/upload
+// @access  Private
+export const uploadAvatar = async (req, res) => {
+  try {
+    if (!req.file) {
+      return res.status(400).json({ success: false, message: 'Please upload a file' });
+    }
+
+    const result = await uploadToCloudinary(req.file.buffer, {
+      folder: 'velorahd/avatars',
+      resource_type: 'image',
+    });
+
+    res.json({
+      success: true,
+      url: result.secure_url,
+    });
   } catch (error) {
     res.status(500).json({ success: false, message: error.message });
   }

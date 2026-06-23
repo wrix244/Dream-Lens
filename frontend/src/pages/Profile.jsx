@@ -1,7 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import { useSearchParams, useNavigate, Link } from 'react-router-dom';
-import { User, Heart, Bookmark, ShoppingBag, Download, Settings, Lock, Mail, ArrowRight, ShieldAlert, Check, X, Camera } from 'lucide-react';
+import { User, Heart, Bookmark, ShoppingBag, Download, Settings, Lock, Mail, ArrowRight, ShieldAlert, Check, X, Camera, Upload } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
+import axios from 'axios';
 import { useProfile, useUpdateProfile, useDeleteProfile } from '../hooks/useAuth';
 import { useFavorites } from '../hooks/useFavorites';
 import { usePurchaseHistory } from '../hooks/usePurchases';
@@ -13,39 +14,21 @@ import SkeletonCard from '../components/common/SkeletonCard';
 
 const avatarPresets = [
   {
-    category: 'Anime / Manga',
+    category: 'Anime Presets',
     icons: [
       { name: 'Goku Style', url: '/avatars/anime.png' },
-      { name: 'Cyberpunk Girl', url: 'https://images.unsplash.com/photo-1563089145-599997674d42?w=150&h=150&fit=crop&q=80' },
-      { name: 'Synthwave Boy', url: 'https://images.unsplash.com/photo-1570295999919-56ceb5ecca61?w=150&h=150&fit=crop&q=80' },
-      { name: 'Neon Samurai', url: 'https://images.unsplash.com/photo-1578632767115-351597cf2477?w=150&h=150&fit=crop&q=80' }
+      { name: 'Naruto Style', url: '/avatars/anime_2.png' },
+      { name: 'Cyber Girl', url: '/avatars/anime_3.png' },
+      { name: 'Samurai Warrior', url: '/avatars/anime_4.png' }
     ]
   },
   {
-    category: 'DC Characters / Comics',
+    category: 'DC Character Presets',
     icons: [
-      { name: 'Dark Knight', url: '/avatars/dc.png' },
-      { name: 'Joker Style', url: 'https://images.unsplash.com/photo-1601513525393-8b5e9f1a268a?w=150&h=150&fit=crop&q=80' },
-      { name: 'Red Spidermask', url: 'https://images.unsplash.com/photo-1635805737707-575885ab0820?w=150&h=150&fit=crop&q=80' },
-      { name: 'Cyber Hero', url: 'https://images.unsplash.com/photo-1620641788421-7a1c342ea42e?w=150&h=150&fit=crop&q=80' }
-    ]
-  },
-  {
-    category: '3D Render / Sci-Fi',
-    icons: [
-      { name: 'Astronaut', url: '/avatars/3d.png' },
-      { name: 'Cyber Mech', url: '/avatars/ninja.png' },
-      { name: 'Synth Cyborg', url: 'https://images.unsplash.com/photo-1618005198143-e528346d9a59?w=150&h=150&fit=crop&q=80' },
-      { name: 'Minimal Render', url: 'https://images.unsplash.com/photo-1620336655055-088d06e36bf0?w=150&h=150&fit=crop&q=80' }
-    ]
-  },
-  {
-    category: 'Classic / Pop Art',
-    icons: [
-      { name: 'Pixel Gamer', url: 'https://images.unsplash.com/photo-1620641788421-7a1c342ea42e?w=150&h=150&fit=crop&q=80' },
-      { name: 'Minimal Portrait', url: 'https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?w=150&h=150&fit=crop&q=80' },
-      { name: 'Retro Gamer', url: 'https://images.unsplash.com/photo-1566492031773-4f4e44671857?w=150&h=150&fit=crop&q=80' },
-      { name: 'Statue Art', url: 'https://images.unsplash.com/photo-1605721911519-3dfeb3be25e7?w=150&h=150&fit=crop&q=80' }
+      { name: 'Batman', url: '/avatars/dc.png' },
+      { name: 'Joker Style', url: '/avatars/dc_2.png' },
+      { name: 'Superman', url: '/avatars/dc_3.png' },
+      { name: 'Wonder Woman', url: '/avatars/dc_4.png' }
     ]
   }
 ];
@@ -84,6 +67,7 @@ export default function Profile() {
   const [showDeleteModal, setShowDeleteModal] = useState(false);
   const [deleteConfirmText, setDeleteConfirmText] = useState('');
   const [showAvatarModal, setShowAvatarModal] = useState(false);
+  const [isUploading, setIsUploading] = useState(false);
 
   const handleAvatarSelect = (avatarUrl) => {
     updateProfileMutation.mutate(
@@ -94,6 +78,45 @@ export default function Profile() {
         }
       }
     );
+  };
+
+  const handleCustomAvatarUpload = async (e) => {
+    const file = e.target.files[0];
+    if (!file) return;
+
+    if (file.size > 5 * 1024 * 1024) {
+      addToast('Avatar image must be less than 5MB.', 'error');
+      return;
+    }
+
+    const formData = new FormData();
+    formData.append('avatar', file);
+
+    try {
+      setIsUploading(true);
+      const response = await axios.post('/api/auth/profile/upload', formData, {
+        headers: {
+          'Content-Type': 'multipart/form-data',
+        },
+      });
+
+      if (response.data.success) {
+        updateProfileMutation.mutate(
+          { name, email, profilePicture: response.data.url },
+          {
+            onSuccess: () => {
+              addToast('Custom avatar uploaded successfully!', 'success');
+              setShowAvatarModal(false);
+            },
+          }
+        );
+      }
+    } catch (error) {
+      const message = error.response?.data?.message || 'Failed to upload custom avatar.';
+      addToast(message, 'error');
+    } finally {
+      setIsUploading(false);
+    }
   };
 
   const handleDeleteAccount = () => {
@@ -620,6 +643,36 @@ export default function Profile() {
                     </div>
                   </div>
                 ))}
+              </div>
+
+              {/* Custom Upload from Gallery */}
+              <div className="border-t border-border pt-4">
+                <input
+                  type="file"
+                  id="custom-avatar-input"
+                  accept="image/*"
+                  onChange={handleCustomAvatarUpload}
+                  className="hidden"
+                  disabled={isUploading}
+                />
+                <button
+                  type="button"
+                  onClick={() => document.getElementById('custom-avatar-input').click()}
+                  disabled={isUploading}
+                  className="w-full py-2.5 rounded-xl border border-border hover:bg-surface-2 text-white text-xs font-bold transition flex items-center justify-center gap-1.5 cursor-pointer disabled:opacity-50"
+                >
+                  {isUploading ? (
+                    <>
+                      <div className="w-3.5 h-3.5 border-2 border-white border-t-transparent rounded-full animate-spin" />
+                      <span>Uploading...</span>
+                    </>
+                  ) : (
+                    <>
+                      <Upload className="w-4 h-4 text-primary" />
+                      <span>Upload from Gallery</span>
+                    </>
+                  )}
+                </button>
               </div>
             </motion.div>
           </motion.div>
